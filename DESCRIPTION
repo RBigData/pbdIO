@@ -1,27 +1,25 @@
 Package: pbdIO
-Version: 0.1-0
-Date: 2016-02-23
 Title: Programming with Big Data -- Input-Output
-Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
-        "ostrouchovg@ornl.gov"),
-        person("George", "Ostrouchov", role = "aut"),
-Depends: R (>= 3.0.0), pbdMPI
-Enhances: pbdNCDF4, pbdADIOS
-LazyLoad: yes
-LazyData: yes
 Description: An interface to parallel input output packages
-        with a focus on Single Program/Multiple Data ('SPMD')
-        parallel programming style, which is intended for batch parallel
-        execution.
-SystemRequirements: OpenMPI (>= 1.5.4) on Solaris, Linux, Mac, and
-        FreeBSD. MS-MPI (Microsoft HPC Pack 2012 R2 MS-MPI
-        Redistributable Package) on Windows.
+    with a focus on Single Program/Multiple Data ('SPMD')
+    parallel programming style, which is intended for batch parallel
+    execution.
+Version: 0.1-0
 License: Mozilla Public License 2.0
+Depends:
+    R (>= 3.0.0)
+Imports: 
+    pbdMPI (>= 0.3.2),
+    data.table (>= 1.9.4)
+Enhances: pbdNCDF4,
+    pbdADIOS
+ByteCompile: yes
+Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
+    "ostrouchovg@ornl.gov"),
+    person("Drew", "Schmidt", role="ctb"))
 URL: http://r-pbd.org/
 BugReports: http://group.r-pbd.org/
 MailingList: Please send questions and comments regarding pbdR to
-        RBigData@gmail.com
-NeedsCompilation: yes
-Packaged:
-Author: George Ostrouchov [aut, cre]
+    RBigData@gmail.com
 Maintainer: George Ostrouchov <ostrouchovg@ornl.gov>
+RoxygenNote: 5.0.1
