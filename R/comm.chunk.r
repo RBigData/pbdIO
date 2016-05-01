@@ -1,3 +1,4 @@
+#' @export
 comm.chunk <- function(N, form=c("number", "vector"),
                        type=c("balance", "equal"),
                        lo.side=c("left", "right"),

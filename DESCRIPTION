@@ -6,10 +6,12 @@ Description: An interface to parallel input output packages
     execution.
 Version: 0.1-0
 License: Mozilla Public License 2.0
-Depends: R (>= 3.0.0)
-Import: pbdMPI (>= 0.3.2)
-Enhances: 
-    pbdNCDF4,
+Depends:
+    R (>= 3.0.0)
+Imports: 
+    pbdMPI (>= 0.3.2),
+    data.table (>= 1.9.4)
+Enhances: pbdNCDF4,
     pbdADIOS
 Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
     "ostrouchovg@ornl.gov"))
@@ -18,3 +20,4 @@ BugReports: http://group.r-pbd.org/
 MailingList: Please send questions and comments regarding pbdR to
     RBigData@gmail.com
 Maintainer: George Ostrouchov <ostrouchovg@ornl.gov>
+RoxygenNote: 5.0.1

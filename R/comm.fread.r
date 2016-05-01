@@ -1,10 +1,12 @@
 
 ## given a directory, reads all csv files in parallel with available resources
+#' @importFrom data.table fread
+#' 
+#' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
                        keepers=comm.size(), rebalance=TRUE, verbose=0,
                        checksum=TRUE) {
     if(verbose > 1) a <- deltime()
-    suppressPackageStartupMessages(library(data.table))
     files <- file.info(list.files(dir, pattern=pattern, full.names=TRUE))
     sizes <- files$size
     my_rank <- comm.rank()
