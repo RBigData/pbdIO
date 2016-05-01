@@ -3,3 +3,4 @@
 export(comm.fread)
 import(pbdMPI)
 importFrom(data.table,fread)
+importFrom(data.table,rbindlist)

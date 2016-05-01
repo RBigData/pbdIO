@@ -27,7 +27,7 @@
 #' ### TODO
 #' }
 #' 
-#' @importFrom data.table fread
+#' @importFrom data.table fread rbindlist
 #' 
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
@@ -59,11 +59,9 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     if(verbose) for(ifile in my.files)
                     cat(my_rank, rownames(files)[ifile], "\n")
     
-    X <- NULL
-    for(file in rownames(files)[my.files]) {
-        ##        if(my_rank < nrow(files)
-        X <- rbind(X, suppressWarnings(fread(file, showProgress=FALSE)))
-    }
+    # TODO need to check if my.files is empty?
+    l <- lapply(rownames(files)[my.files], function(file) suppressWarnings(fread(file, showProgress=FALSE)))
+    X <- rbindlist(l)
 
     ## rank 0 always reads, so it has all attributes. Propagate to NULLs.
     X0 <- bcast(X[0])
@@ -140,7 +138,7 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
 
     if(checksum) {
         check_sum()
-        a <- deltime(a, "T    component check_sum time:")
+        if (verbose > 1) a <- deltime(a, "T    component check_sum time:")
     }
 
     if(verbose) {
