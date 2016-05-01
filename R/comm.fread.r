@@ -58,6 +58,7 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     my.files <- comm.chunk(nrow(files), lo.side="right", form="vector")
     if(verbose) for(ifile in my.files)
                     cat(my_rank, rownames(files)[ifile], "\n")
+    
     X <- NULL
     for(file in rownames(files)[my.files]) {
         ##        if(my_rank < nrow(files)
@@ -83,7 +84,7 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
 
     if(checksum) {
         check_sum()
-        a <- deltime(a, "T    component check_sum time:")
+        if (verbose > 1) a <- deltime(a, "T    component check_sum time:")
     }
 
     if(rebalance) {
