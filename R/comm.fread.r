@@ -55,7 +55,7 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     sizes <- files$size
     my_rank <- comm.rank()
     my.files <- get.jid(nrow(files), method="block0")
-    my.files <- comm.chunk(nrow(file), lo.side="right", form="vector")
+    my.files <- comm.chunk(nrow(files), lo.side="right", form="vector")
     if(verbose) for(ifile in my.files)
                     cat(my_rank, rownames(files)[ifile], "\n")
     X <- NULL
