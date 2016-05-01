@@ -24,7 +24,26 @@
 #' 
 #' @examples
 #' \dontrun{
-#' ### TODO
+#' ### Save code in a file "demo.r" and run with 2 processors by
+#' ### SHELL> mpiexec -np 2 Rscript demo.r
+#' library(pbdMPI)
+#' library(pbdIO)
+#' 
+#' path <- "/tmp/read"
+#' comm.print(dir(path))
+#' ## [1] "a.csv" "b.csv"
+#' 
+#' X <- comm.fread(path)
+#' 
+#' comm.print(X, all.rank=TRUE)
+#' ## COMM.RANK = 0
+#' ##    a b c
+#' ## 1: 1 2 3
+#' ## COMM.RANK = 1
+#' ##    a b c
+#' ## 1: 2 3 4
+#' 
+#' finalize()
 #' }
 #' 
 #' @importFrom data.table fread rbindlist
