@@ -13,6 +13,7 @@ Imports:
     data.table (>= 1.9.4)
 Enhances: pbdNCDF4,
     pbdADIOS
+ByteCompile: yes
 Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
     "ostrouchovg@ornl.gov"),
     person("Drew", "Schmidt", role="ctb"))
