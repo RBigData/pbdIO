@@ -1,13 +1,57 @@
-
-## given a directory, reads all csv files in parallel with available resources
+#' comm.fread
+#' 
+#' Given a directory, \code{comm.fread()} reads all csv files contained
+#' in it in parallel with available resources.
+#' 
+#' @param dir
+#' A directory containing the files desired to be read.  The directory
+#' should be accessible to all readers.
+#' @param pattern
+#' The pattern for files desired to be read.
+#' @param readers
+#' The number of readers.
+#' @param rebalance
+#' Logical; should all ranks "balance" the return, meaning each has
+#' roughly the same number of rows?
+#' @param verbose
+#' Determines the verbosity level. Acceptable values are 0, 1, and 2 for
+#' least to most verbosity.
+#' @param checksum
+#' Logical; should variable sums be reported to check input?
+#' 
+#' @return
+#' TODO
+#' 
+#' @examples
+#' \dontrun{
+#' ### TODO
+#' }
+#' 
 #' @importFrom data.table fread
 #' 
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
-                       keepers=comm.size(), rebalance=TRUE, verbose=0,
-                       checksum=TRUE) {
+                       rebalance=TRUE, verbose=0, checksum=TRUE) {
+    if (!is.character(dir) || length(dir) != 1 || is.na(dir))
+        comm.stop("argument 'dir' must be a string")
+    if (!is.character(pattern) || length(pattern) != 1 || is.na(pattern))
+        comm.stop("argument 'pattern' must be a string")
+    if (!is.numeric(readers) || length(readers) != 1 || is.na(readers))
+        comm.stop("argument 'readers' must be an integer")
+    if (!is.logical(rebalance) || length(rebalance) != 1 || is.na(rebalance))
+        comm.stop("argument 'rebalance' must be a bool")
+    if (!(verbose %in% 0:2))
+        comm.stop("argument 'verbose' must be 0, 1, or 2")
+    if (!is.logical(checksum) || length(checksum) != 1 || is.na(checksum))
+        comm.stop("argument 'checksum' must be a bool")
+    
+    
     if(verbose > 1) a <- deltime()
     files <- file.info(list.files(dir, pattern=pattern, full.names=TRUE))
+    
+    if (NROW(files) == 0)
+        comm.stop(paste("Directory", dir, "contains no files matching pattern", pattern))
+    
     sizes <- files$size
     my_rank <- comm.rank()
     my.files <- get.jid(nrow(files), method="block0")

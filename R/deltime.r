@@ -1,4 +1,3 @@
-#' @export
 deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
     time <- proc.time()["elapsed"]
     if(!is.null(text))

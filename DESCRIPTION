@@ -14,7 +14,8 @@ Imports:
 Enhances: pbdNCDF4,
     pbdADIOS
 Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
-    "ostrouchovg@ornl.gov"))
+    "ostrouchovg@ornl.gov"),
+    person("Drew", "Schmidt", role="ctb"))
 URL: http://r-pbd.org/
 BugReports: http://group.r-pbd.org/
 MailingList: Please send questions and comments regarding pbdR to
