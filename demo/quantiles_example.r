@@ -1,7 +1,5 @@
-suppressPackageStartupMessages(library(pbdMPI))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(pbdIO))
-source("deltime.r")
 source("comm.quantile.r")
 
 a0 <- a <- deltime()
