@@ -151,9 +151,8 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     if(checksum) {
         after_sums <- check_sum()
         if (verbose) a <- deltime(a, "T    component check_sum time:")
-        before <- allreduce(before_sums)
-        after <- allreduce(after_sums)
-        comm.print(all.equal(before, after))
+        equal <- all.equal(allreduce(before_sums), allreduce(after_sums))
+        comm.cat("checksum equal:", equal, "\n")
         if (verbose) a <- deltime(a, "T    component check_sum reduce time:")
     }
 

@@ -1,4 +1,5 @@
-airline_example <- function() {
+matrix_example <- function() {
+    ## TODO Unfinished example code!
     suppressPackageStartupMessages(library(pbdMPI))
     suppressPackageStartupMessages(library(data.table))
     suppressPackageStartupMessages(library(pbdDEMO))
