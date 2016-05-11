@@ -21,7 +21,8 @@ roughly the same number of rows?}
 \item{verbose}{Determines the verbosity level. Acceptable values are 0, 1, and 2 for
 least to most verbosity.}
 
-\item{checksum}{Logical; should variable sums be reported to check input?}
+\item{checksum}{Logical; should numerical variable sums be reported to check input 
+before and after rebalance?}
 }
 \value{
 TODO

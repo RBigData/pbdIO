@@ -1,7 +1,50 @@
+#' comm.chunk
+#' 
+#' Given a total number of items comm.chunk splits the number into equal 
+#' chunks. Warious options are possible when the number does not split evenly
+#' into chunks.
+#'
+#' @param N 
+#' The number of items to split into equal chunks.
+#' @param form 
+#' Output a chunk as a sigle "number" or as a "vector" of items from 1:N.
+#' @param type 
+#' Either "balance" the chunks so they differ by no more than 1 item or force 
+#' as many as possible to be "equal" with possibly one or more smaller or even
+#' zero size chunks.
+#' @param lo.side 
+#' If exact balance is not possible, put the lower chunks on the "left" or on 
+#' the "right".
+#' @param all.rank 
+#' FALSE returns only the chunk output for rank r. TRUE returns a vector of 
+#' length p (when form="number"), and a list of length p (when form="vector") 
+#' each containing the output for the corresponding rank.
+#' @param p 
+#' The number of chunks (defaults to comm.size()).
+#' @param rank 
+#' The rank of returned chunk (defaults to comm.rank()). Note that ranks are 
+#' numbered from 0 to p-1, whereas the list elements for all.rank=TRUE are 
+#' numbered 1 to p.
+#'
+#' @return
+#' A numeric value from 0:N or a vector giving a contiguous subset of 1:N 
+#' (depending on form) for the rank instance. If all.rank is TRUE, a vector 
+#' or a list of vectors, respectively.  
+#' 
+#' @importFrom pbdMPI comm.size comm.rank
+#' @examples
+#' ## Note that the p and rank parameters are provided by comm.size() and
+#' ## comm.rank(), respectively, when running in parallel with pbdMPI and
+#' ## need not be specified.
+#' comm.chunk(16, all.rank=TRUE, p=5)
+#' comm.chunk(16, type="equal", all.rank=TRUE, p=5)
+#' comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
+#' comm.chunk(16, p=5, rank=2)
+#' @export
 comm.chunk <- function(N, form=c("number", "vector"),
                        type=c("balance", "equal"),
                        lo.side=c("left", "right"),
-                       all.rank=FALSE, p=comm.size(), r=comm.rank()) {
+                       all.rank=FALSE, p=comm.size(), rank=comm.rank()) {
 ### allocates N items into p equal groups with remainder and output options
 ###
     base <- N %/% p
@@ -46,12 +89,12 @@ comm.chunk <- function(N, form=c("number", "vector"),
     ## now output in correct form
     if(form[1] == "number") {
         if(all.rank) ret <- items
-        else ret <- items[r + 1]
+        else ret <- items[rank + 1]
     } else {
         items_base <- c(0, cumsum(items)[-p])
         if(all.rank) ret <- lapply(1:length(items_base),
                      function(i) lapply(items, seq_len)[[i]] + items_base[i])
-        else ret <- items_base[r + 1] + seq_len(items[r + 1])
+        else ret <- items_base[rank + 1] + seq_len(items[rank + 1])
     }
     ret
 }

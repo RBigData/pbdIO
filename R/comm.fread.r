@@ -1,8 +1,8 @@
 #' comm.fread
-#' 
+#'
 #' Given a directory, \code{comm.fread()} reads all csv files contained
 #' in it in parallel with available resources.
-#' 
+#'
 #' @param dir
 #' A directory containing the files desired to be read.  The directory
 #' should be accessible to all readers.
@@ -17,24 +17,25 @@
 #' Determines the verbosity level. Acceptable values are 0, 1, and 2 for
 #' least to most verbosity.
 #' @param checksum
-#' Logical; should variable sums be reported to check input?
-#' 
+#' Logical; should numerical variable sums be reported to check input 
+#' before and after rebalance?
+#'
 #' @return
 #' TODO
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' ### Save code in a file "demo.r" and run with 2 processors by
 #' ### SHELL> mpiexec -np 2 Rscript demo.r
 #' library(pbdMPI)
 #' library(pbdIO)
-#' 
+#'
 #' path <- "/tmp/read"
 #' comm.print(dir(path))
 #' ## [1] "a.csv" "b.csv"
-#' 
+#'
 #' X <- comm.fread(path)
-#' 
+#'
 #' comm.print(X, all.rank=TRUE)
 #' ## COMM.RANK = 0
 #' ##    a b c
@@ -42,12 +43,12 @@
 #' ## COMM.RANK = 1
 #' ##    a b c
 #' ## 1: 2 3 4
-#' 
+#'
 #' finalize()
 #' }
-#' 
+#'
 #' @importFrom data.table fread rbindlist
-#' 
+#'
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
                        rebalance=TRUE, verbose=0, checksum=TRUE) {
@@ -63,28 +64,29 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
         comm.stop("argument 'verbose' must be 0, 1, or 2")
     if (!is.logical(checksum) || length(checksum) != 1 || is.na(checksum))
         comm.stop("argument 'checksum' must be a bool")
-    
-    
+
+
     if(verbose > 1) a <- deltime()
     files <- file.info(list.files(dir, pattern=pattern, full.names=TRUE))
-    
+
     if (NROW(files) == 0)
-        comm.stop(paste("Directory", dir, "contains no files matching pattern", pattern))
-    
+        comm.stop(paste("Directory", dir,
+                        "contains no files matching pattern", pattern))
+
     sizes <- files$size
     my_rank <- comm.rank()
-    my.files <- get.jid(nrow(files), method="block0")
-    my.files <- comm.chunk(nrow(files), lo.side="right", form="vector")
-    if(verbose) for(ifile in my.files)
+    my_files <- comm.chunk(nrow(files), lo.side="right", form="vector")
+    if(verbose) for(ifile in my_files)
                     cat(my_rank, rownames(files)[ifile], "\n")
-    
-    # TODO need to check if my.files is empty?
-    l <- lapply(rownames(files)[my.files], function(file) suppressWarnings(fread(file, showProgress=FALSE)))
+
+    # TODO if empty? Is length(X) is zero enough?
+    l <- lapply(rownames(files)[my_files], function(file)
+        suppressWarnings(fread(file, showProgress=FALSE)))
     X <- rbindlist(l)
 
     ## rank 0 always reads, so it has all attributes. Propagate to NULLs.
     X0 <- bcast(X[0])
-    if(is.null(X)) X <- X0
+    if(length(X) == 0) X <- X0
 
     if(verbose > 1) a <- deltime(a, "T    component fread time:")
 
@@ -108,18 +110,14 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
         ## rebalance to all ranks X csv
         nrow_have <- unlist(allgather(nrow(X)))
         N <- sum(nrow_have)
-        comm.print(N)
-        balanced_index <- get.jid(N, all=TRUE)
-        new_index <- comm.chunk(N, form="number", type="equal",
-                                lo.side="right", all.rank=TRUE)
         ## TODO Three nrow_ vectors can be one with a bit more logic
-        nrow_want <- unlist(lapply(balanced_index, length))
+        nrow_want <- comm.chunk(N, form="number", type="equal",
+                                lo.side="right", all.rank=TRUE)
         nrow_send <- pmax(nrow_have - nrow_want, 0)
         nrow_recv <- pmax(nrow_want - nrow_have, 0)
         if(verbose > 1) {
             comm.cat("nrow_have:", nrow_have, "\n")
             comm.cat("nrow_want:", nrow_want, "\n")
-            comm.cat("new_index:", new_index, "\n")
             comm.cat("nrow_send:", nrow_send, "\n")
             comm.cat("nrow_recv:", nrow_recv, "\n")
         }
