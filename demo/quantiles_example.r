@@ -67,7 +67,5 @@ comm.print(round(do.call(rbind, ret), 3))
 a <- deltime(a, "T Quantile time:")
 a <- deltime(a0, "T Total time:")
 
-## for the matrix example, do pca on all data, projecting airports into
-##    a 2d picture
 finalize()
 
