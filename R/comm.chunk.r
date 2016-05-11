@@ -31,7 +31,6 @@
 #' (depending on form) for the rank instance. If all.rank is TRUE, a vector 
 #' or a list of vectors, respectively.  
 #' 
-#' @importFrom pbdMPI comm.size comm.rank
 #' @examples
 #' ## Note that the p and rank parameters are provided by comm.size() and
 #' ## comm.rank(), respectively, when running in parallel with pbdMPI and
