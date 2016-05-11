@@ -65,8 +65,7 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     if (!is.logical(checksum) || length(checksum) != 1 || is.na(checksum))
         comm.stop("argument 'checksum' must be a bool")
 
-
-    if(verbose > 1) a <- deltime()
+    if(verbose) a <- deltime()
     files <- file.info(list.files(dir, pattern=pattern, full.names=TRUE))
 
     if (NROW(files) == 0)
@@ -76,8 +75,8 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     sizes <- files$size
     my_rank <- comm.rank()
     my_files <- comm.chunk(nrow(files), lo.side="right", form="vector")
-    if(verbose) for(ifile in my_files)
-                    cat(my_rank, rownames(files)[ifile], "\n")
+    if(verbose > 1) for(ifile in my_files)
+                      cat(my_rank, rownames(files)[ifile], "\n")
 
     # TODO if empty? Is length(X) is zero enough?
     l <- lapply(rownames(files)[my_files], function(file)
@@ -88,22 +87,18 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     X0 <- bcast(X[0])
     if(length(X) == 0) X <- X0
 
-    if(verbose > 1) a <- deltime(a, "T    component fread time:")
+    if(verbose) a <- deltime(a, "T    component fread time:")
 
     check_sum <- function() {
         ## Report variable sums to check input
         my_numeric <- sapply(X, is.numeric)
         Xnumeric <- which(allreduce(my_numeric, op="land"))
-        my_colsums <- colSums(X[, Xnumeric, with=FALSE], na.rm=TRUE)
-        c_names <- names(my_colsums)
-        colsums <- allreduce(my_colsums)
-        names(colsums) <- c_names
-        comm.print(colsums)
+        colSums(X[, Xnumeric, with=FALSE], na.rm=TRUE)
     }
 
     if(checksum) {
-        check_sum()
-        if (verbose > 1) a <- deltime(a, "T    component check_sum time:")
+        before_sums <- check_sum()
+        if (verbose) a <- deltime(a, "T    component check_sum time:")
     }
 
     if(rebalance) {
@@ -154,8 +149,12 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     if(verbose) a <- deltime(a, "T    component rebalance time:")
 
     if(checksum) {
-        check_sum()
-        if (verbose > 1) a <- deltime(a, "T    component check_sum time:")
+        after_sums <- check_sum()
+        if (verbose) a <- deltime(a, "T    component check_sum time:")
+        before <- allreduce(before_sums)
+        after <- allreduce(after_sums)
+        comm.print(all.equal(before, after))
+        if (verbose) a <- deltime(a, "T    component check_sum reduce time:")
     }
 
     if(verbose) {
