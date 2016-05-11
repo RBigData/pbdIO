@@ -45,16 +45,15 @@ comm.quantile <- function(x, probs=seq(0, 1, 0.25), na.rm=FALSE, names=TRUE,
 a0 <- a <- deltime()
 
 ###
-### This example assumes that dir is a directory containing the airline
-###   unzipped csv data in 22 individual year files, with a total siize
-###   of about 12 GB. To download the files, see:
+### This example assumes that external variable dir points to a directory
+###   containing the airline unzipped csv data in 22 individual year files,
+###   with a total siize of about 12 GB. To download the files, see:
 ###   http://stat-computing.org/dataexpo/2009/the-data.html
 ###   Preferably, the directory resides on a parallel file system such as
 ###   lustre.
 ###
-dir <- "/lustre/atlas/scratch/ost/stf006/airline"
 
-air <- comm.fread(dir, verbose=2, rebalance=TRUE, checksum=TRUE)
+air <- comm.fread(dir, verbose=1, rebalance=TRUE, checksum=TRUE)
 a <- deltime(a, "T Total comm.fread:")
 
 ## TODO set up a communicator on the fly that includes only non-empties.
