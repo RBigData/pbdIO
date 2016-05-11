@@ -1,3 +1,8 @@
+##
+## Run this demo with
+## mpirun -np 32 Rscript -e 'dir <- "your-airline-data-directory"; demo("quantiles_example", package="pbdIO", echo=FALSE)'
+##
+
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(pbdMPI))
 suppressPackageStartupMessages(library(pbdIO))
