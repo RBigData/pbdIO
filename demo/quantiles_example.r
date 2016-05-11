@@ -62,7 +62,7 @@ a <- deltime(a, "T Total comm.fread:")
 
 ret <- tapply(air$DepDelay, air$DayOfWeek, comm.quantile,
               probs=c(0.50, 0.90, 0.99), na.rm=TRUE, verbose=0)
-comm.cat("numeric all.equal after rebalance: ")
+
 comm.print(round(do.call(rbind, ret), 3))
 a <- deltime(a, "T Quantile time:")
 a <- deltime(a0, "T Total time:")
