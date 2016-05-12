@@ -35,6 +35,8 @@
 #' ## Note that the p and rank parameters are provided by comm.size() and
 #' ## comm.rank(), respectively, when running in parallel with pbdMPI and
 #' ## need not be specified.
+#' library(pbdIO)
+#' 
 #' comm.chunk(16, all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
