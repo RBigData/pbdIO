@@ -1,2 +1,2 @@
-matrix    pbdIO   Reading a matrix.
-quantiles pbdIO   Example extracting quantiles.
+matrix    pbdIO   Example reading airline data csv files and performing matrix operations (unfinished)
+quantiles pbdIO   Example reading airline data csv files and extracting quantiles.
