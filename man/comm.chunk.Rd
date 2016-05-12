@@ -4,9 +4,8 @@
 \alias{comm.chunk}
 \title{comm.chunk}
 \usage{
-comm.chunk(N, form = c("number", "vector"), type = c("balance", "equal"),
-  lo.side = c("left", "right"), all.rank = FALSE, p = comm.size(),
-  rank = comm.rank())
+comm.chunk(N, form = "number", type = "balance", lo.side = "left",
+  all.rank = FALSE, p = comm.size(), rank = comm.rank())
 }
 \arguments{
 \item{N}{The number of items to split into equal chunks.}
@@ -48,5 +47,6 @@ comm.chunk(16, all.rank=TRUE, p=5)
 comm.chunk(16, type="equal", all.rank=TRUE, p=5)
 comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
 comm.chunk(16, p=5, rank=2)
+
 }
 
