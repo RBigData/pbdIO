@@ -1,6 +1,6 @@
 ##
 ## Run this demo with
-## mpirun -np 32 Rscript -e 'dir <- "your-airline-data-directory"; demo("quantiles_example", package="pbdIO", echo=FALSE)'
+## mpirun -np 32 Rscript -e 'dir <- "your-airline-data-directory"; demo("quantiles", package="pbdIO", echo=FALSE)'
 ##
 
 suppressPackageStartupMessages(library(data.table))
@@ -52,7 +52,7 @@ a0 <- a <- deltime()
 ###
 ### This example assumes that external variable dir points to a directory
 ###   containing the airline unzipped csv data in 22 individual year files,
-###   with a total siize of about 12 GB. To download the files, see:
+###   with a total size of about 12 GB. To download the files, see:
 ###   http://stat-computing.org/dataexpo/2009/the-data.html
 ###   Preferably, the directory resides on a parallel file system such as
 ###   lustre.
