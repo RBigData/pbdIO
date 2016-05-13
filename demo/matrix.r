@@ -29,8 +29,10 @@ air_num <- subset(air, select=numeric & nafree)
 air_mat <- as.matrix(air_num)
 comm.cat("dim(air_mat)", dim(air_mat), "class(air_mat)", class(air_mat), "\n", quiet=TRUE)
 comm.cat("colnames(air_mat)", colnames(air_mat), "\n", quiet=TRUE)
-
 a <- deltime(a, "matrix subset:")
+
+air_dmat <- new("ddmatrix", DATA=air_mat, bldim=dim(air_mat), ICTXT=1)
+comm.print(air_dmat)
 
 library(pbdML)
 
