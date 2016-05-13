@@ -13,7 +13,7 @@ init.grid()
 a0 <- a <- deltime()
 
 dir <- "/lustre/atlas/scratch/ost/stf006/airline"
-air <- comm.fread(dir, verbose=2, rebalance=TRUE, checksum=FALSE)
+air <- comm.fread(dir, verbose=1, rebalance=TRUE, checksum=TRUE)
 a <- deltime(a, "T Total comm.fread:")
 
 ## for the matrix example, do pca on all data, projecting airports
