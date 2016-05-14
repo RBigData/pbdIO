@@ -31,10 +31,24 @@ comm.cat("dim(air_mat)", dim(air_mat), "class(air_mat)", class(air_mat), "\n", q
 comm.cat("colnames(air_mat)", colnames(air_mat), "\n", quiet=TRUE)
 a <- deltime(a, "matrix subset:")
 
-air_dmat <- new("ddmatrix", DATA=air_mat, bldim=dim(air_mat), ICTXT=1)
-comm.print(air_dmat)
+air_dmat1 <- new("ddmatrix", Data=air_mat,                                      
+                 dim=c(allreduce(nrow(air_mat)), ncol(air_mat)),                 
+                 ldim=dim(air_mat), bldim=dim(air_mat), ICTXT=2)                 
+comm.print(air_dmat1)                                                           
+a <- deltime(a, "matrix new ddmatrix:")                                         
 
-library(pbdML)
+air_dmat2 <- ddmatrix(air_mat, nrow=allreduce(nrow(air_mat)),                   
+                      ncol=ncol(air_mat), bldim=dim(air_mat), ICTXT=2)           
+comm.print(air_dmat2)                                                           
+a <- deltime(a, "matrix new ddmatrix:")                                         
 
-a <- deltime(a0, "T Total time:")
-finalize()
+diff <- air_dmat1 - air_dmat2                                                   
+comm.print(diff)                                                                
+
+sum_diff <- allreduce(sum(diff))                                                
+comm.print(sum_diff)                                                            
+
+library(pbdML)                                                                  
+
+a <- deltime(a0, "T Total time:")                                               
+finalize()                                                                      
