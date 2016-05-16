@@ -35,39 +35,52 @@
 #' ## Note that the p and rank parameters are provided by comm.size() and
 #' ## comm.rank(), respectively, when running in parallel with pbdMPI and
 #' ## need not be specified.
+#' library(pbdIO)
+#' 
 #' comm.chunk(16, all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
 #' comm.chunk(16, p=5, rank=2)
+#' 
 #' @export
-comm.chunk <- function(N, form=c("number", "vector"),
-                       type=c("balance", "equal"),
-                       lo.side=c("left", "right"),
+comm.chunk <- function(N, form="number", type="balance", lo.side="left",
                        all.rank=FALSE, p=comm.size(), rank=comm.rank()) {
-### allocates N items into p equal groups with remainder and output options
-###
+    
+    form <- comm.match.arg(tolower(form), c("number", "vector"))
+    type <- comm.match.arg(tolower(type), c("balance", "equal"))
+    lo.side <- comm.match.arg(tolower(lo.side), c("left", "right"))
+    if (!is.logical(all.rank) || length(all.rank) != 1 || is.na(all.rank))
+        comm.stop("argument 'all.rank' must be a bool")
+    if (!is.numeric(p) || p < 1)
+        comm.stop("argument 'p' must be a positive integer")
+    if (!is.numeric(rank) || rank < 0 || rank >= comm.size())
+        comm.stop("argument 'rank' must be an integer from 0 to comm.size()-1")
+    
+    p <- as.integer(p)
+    rank <- as.integer(rank)
+    
     base <- N %/% p
     rem <- N - base*p
     items <- rep(base, p)
 
     ## options differ only if remainder!
     if(rem) {
-        if(type[1] == "balance") {
-            if(lo.side[1] == "right") {
+        if(type == "balance") {
+            if(lo.side == "right") {
                 items[1:rem] <- base + 1
-            } else if(lo.side[1] == "left") {
+            } else if(lo.side == "left") {
                 items[(p - rem + 1):p] <- base + 1
-            } else comm.cat("comm.chunk:", lo.side[1], "unknown\n")
-        } else if(type[1] == "equal") {
+            }
+        } else if(type == "equal") {
             items <- items + 1
             rem <- p*(base + 1) - N
-            if(lo.side[1] == "right") {
+            if(lo.side == "right") {
                 i <- p
                 increment <- -1
-            } else if(lo.side[1] == "left") {
+            } else if(lo.side == "left") {
                 i <- 1
                 increment <- 1
-            } else comm.cat("comm.chunk:", lo.side[1], "unknown\n")
+            }
             while(rem) {
                 if(rem > base) {
                     items[i] <- 0
@@ -78,15 +91,15 @@ comm.chunk <- function(N, form=c("number", "vector"),
                 }
                 i <- i + increment
             }
-        } else comm.cat("comm.chunk:", type[1], "unknown\n")
+        }
     }
 
     ## check if all allocated
     if(sum(items) != N) cat("warning: comm.chunk rank", comm.rank(),
-              "split does not add up!\n")
+        "split does not add up!\n")
 
     ## now output in correct form
-    if(form[1] == "number") {
+    if(form == "number") {
         if(all.rank) ret <- items
         else ret <- items[rank + 1]
     } else {
