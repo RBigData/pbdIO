@@ -40,7 +40,7 @@
 #' comm.chunk(16, all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
-#' comm.chunk(16, p=5, rank=2)
+#' comm.chunk(16, p=5, rank=0)
 #' 
 #' @export
 comm.chunk <- function(N, form="number", type="balance", lo.side="left",

@@ -7,9 +7,9 @@ Description: An interface to parallel input output packages
 Version: 0.1-0
 License: Mozilla Public License 2.0
 Depends:
-    R (>= 3.0.0)
+    R (>= 3.0.0),
+    pbdMPI (>= 0.3.2)
 Imports: 
-    pbdMPI (>= 0.3.2),
     data.table (>= 1.9.4)
 Enhances: pbdNCDF4,
     pbdADIOS
