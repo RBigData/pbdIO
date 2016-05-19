@@ -7,7 +7,8 @@
 #' @param N 
 #' The number of items to split into equal chunks.
 #' @param form 
-#' Output a chunk as a sigle "number" or as a "vector" of items from 1:N.
+#' Output a chunk as a sigle "number", as a "vector" of items from 1:N, or as
+#' an "IOpair" giving offsets and lengths in a file.
 #' @param type 
 #' Either "balance" the chunks so they differ by no more than 1 item or force 
 #' as many as possible to be "equal" with possibly one or more smaller or even
@@ -46,7 +47,7 @@
 comm.chunk <- function(N, form="number", type="balance", lo.side="left",
                        all.rank=FALSE, p=comm.size(), rank=comm.rank()) {
     
-    form <- comm.match.arg(tolower(form), c("number", "vector"))
+    form <- comm.match.arg(tolower(form), c("number", "vector", "IOpair"))
     type <- comm.match.arg(tolower(type), c("balance", "equal"))
     lo.side <- comm.match.arg(tolower(lo.side), c("left", "right"))
     if (!is.logical(all.rank) || length(all.rank) != 1 || is.na(all.rank))
@@ -102,11 +103,14 @@ comm.chunk <- function(N, form="number", type="balance", lo.side="left",
     if(form == "number") {
         if(all.rank) ret <- items
         else ret <- items[rank + 1]
-    } else {
+    } else if(form == "vector") {
         items_base <- c(0, cumsum(items)[-p])
         if(all.rank) ret <- lapply(1:length(items_base),
                      function(i) lapply(items, seq_len)[[i]] + items_base[i])
         else ret <- items_base[rank + 1] + seq_len(items[rank + 1])
-    }
+    } else if(form == "IOpair") {
+        offset <- c(0, cumsum(items)[-p])
+        ret <- c(offset[rank + 1], items[rank + 1])
+    } else ret <- NULL
     ret
 }

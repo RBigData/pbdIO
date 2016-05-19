@@ -27,6 +27,7 @@ comm.cat("num", as.integer(numeric), "\n na", as.integer(nafree), "\n", quiet=TR
 
 air_num <- subset(air, select=numeric & nafree)
 air_mat <- as.matrix(air_num)
+dimnames(air_mat) <- NULL
 comm.cat("dim(air_mat)", dim(air_mat), "class(air_mat)", class(air_mat), "\n", quiet=TRUE)
 comm.cat("colnames(air_mat)", colnames(air_mat), "\n", quiet=TRUE)
 a <- deltime(a, "matrix subset:")
@@ -34,12 +35,12 @@ a <- deltime(a, "matrix subset:")
 air_dmat1 <- new("ddmatrix", Data=air_mat,                                      
                  dim=c(allreduce(nrow(air_mat)), ncol(air_mat)),                 
                  ldim=dim(air_mat), bldim=dim(air_mat), ICTXT=2)                 
-comm.print(air_dmat1)                                                           
+comm.print(submatrix(air_dmat1)[1:5, 1:5], all.rank=TRUE)                                                           
 a <- deltime(a, "matrix new ddmatrix:")                                         
 
 air_dmat2 <- ddmatrix(air_mat, nrow=allreduce(nrow(air_mat)),                   
                       ncol=ncol(air_mat), bldim=dim(air_mat), ICTXT=2)           
-comm.print(air_dmat2)                                                           
+comm.print(submatrix(air_dmat2)[1:5, 1:5], all.rank=TRUE)                                                           
 a <- deltime(a, "matrix new ddmatrix:")                                         
 
 diff <- air_dmat1 - air_dmat2                                                   
