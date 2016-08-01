@@ -26,7 +26,7 @@ nafree <- unlist(allreduce(sapply(air, function(x) !any(is.na(x))), op="land"))
 comm.cat("numeric and NA-free:\n", quiet=TRUE)
 comm.cat("num", as.integer(numeric), "\n na", as.integer(nafree), "\n", quiet=TRUE)
 
-air_mat_names <- colnames[numeric & nafree]
+air_mat_names <- airnames[numeric & nafree]
 comm.cat("colnames(air_mat)", air_mat_names, "\n", quiet=TRUE)
 air_num <- subset(air, select=numeric & nafree)
 air_mat <- as.matrix(air_num)
