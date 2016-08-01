@@ -17,7 +17,7 @@
 #' Determines the verbosity level. Acceptable values are 0, 1, and 2 for
 #' least to most verbosity.
 #' @param checksum
-#' Logical; should numerical variable sums be reported to check input 
+#' Logical; should numerical variable sums be reported to check input
 #' before and after rebalance?
 #'
 #' @return
@@ -51,7 +51,7 @@
 #'
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
-                       rebalance=TRUE, verbose=0, checksum=TRUE) {
+                       rebalance=TRUE, verbose=0, checksum=FALSE) {
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
         comm.stop("argument 'dir' must be a string")
     if (!is.character(pattern) || length(pattern) != 1 || is.na(pattern))
@@ -74,7 +74,9 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
 
     sizes <- files$size
     my_rank <- comm.rank()
-    my_files <- comm.chunk(nrow(files), lo.side="right", form="vector")
+    my_files <- comm.chunk(nrow(files), p=readers, lo.side="right",
+                           form="vector")
+    comm.print(my_files, all.rank=TRUE)
     if(verbose > 1) for(ifile in my_files)
                       cat(my_rank, rownames(files)[ifile], "\n")
 
