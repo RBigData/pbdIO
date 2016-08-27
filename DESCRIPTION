@@ -9,10 +9,9 @@ License: Mozilla Public License 2.0
 Depends:
     R (>= 3.0.0),
     pbdMPI (>= 0.3.2)
-Imports: 
+Imports:
     data.table (>= 1.9.4)
-Enhances: pbdNCDF4,
-    pbdADIOS
+Enhances: pbdNCDF4, pbdADIOS
 ByteCompile: yes
 Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
     "ostrouchovg@ornl.gov"),

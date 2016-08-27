@@ -10,15 +10,9 @@
 #' The pattern for files desired to be read.
 #' @param readers
 #' The number of readers.
-#' @param rebalance
-#' Logical; should all ranks "balance" the return, meaning each has
-#' roughly the same number of rows?
 #' @param verbose
 #' Determines the verbosity level. Acceptable values are 0, 1, 2, and 3 for
 #' least to most verbosity.
-#' @param complete.cases
-#' Logical; should rows with one or more NA be removed? Uses function
-#' \code{complete.cases()}.
 #'
 #' @return
 #' TODO
@@ -51,18 +45,13 @@
 #'
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
-                       rebalance=TRUE, complete.cases=FALSE, verbose=0, ...) {
+                       verbose=0, ...) {
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
         comm.stop("argument 'dir' must be a string")
     if (!is.character(pattern) || length(pattern) != 1 || is.na(pattern))
         comm.stop("argument 'pattern' must be a string")
     if (!is.numeric(readers) || length(readers) != 1 || is.na(readers))
         comm.stop("argument 'readers' must be an integer")
-    if (!is.logical(rebalance) || length(rebalance) != 1 || is.na(rebalance))
-        comm.stop("argument 'rebalance' must be a bool")
-    if (!is.logical(complete.cases) || length(complete.cases) != 1 ||
-        is.na(complete.cases))
-        comm.stop("argument 'complete.cases' must be a bool")
     if (!(verbose %in% 0:3))
         comm.stop("argument 'verbose' must be 0, 1, 2, or 3")
 
