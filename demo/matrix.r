@@ -18,8 +18,7 @@ col_classes = c(rep("integer", 8), "character", "integer", "character",
 
 ## local subset of airline data - change to your data location!!
 dir <- "../../R_Thai_Workshop/session-parallel2/data"
-air <- comm.fread(dir, verbose=3, rebalance=TRUE, complete.cases=TRUE,
-                  colClasses=col_classes)
+air <- comm.fread(dir, verbose=3, colClasses=col_classes)
 a <- deltime(a, "T Total comm.fread:")
 
 ## for the matrix example, do pca on all data, projecting airports
