@@ -17,7 +17,7 @@ col_classes = c(rep("integer", 8), "character", "integer", "character",
     "character", rep("integer", 6))
 
 ## local subset of airline data - change to your data location!!
-dir <- "../../R_Thai_Workshop/session-parallel2/data"
+dir <- "/lustre/atlas/scratch/ost/stf006/airline"
 air <- comm.fread(dir, verbose=3, colClasses=col_classes)
 a <- deltime(a, "T Total comm.fread:")
 
