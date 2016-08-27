@@ -44,7 +44,7 @@
 #' @importFrom data.table fread rbindlist
 #'
 #' @export
-comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
+comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
                        verbose=0, ...) {
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
         comm.stop("argument 'dir' must be a string")
