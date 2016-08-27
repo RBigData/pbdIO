@@ -14,11 +14,11 @@
 #' Logical; should all ranks "balance" the return, meaning each has
 #' roughly the same number of rows?
 #' @param verbose
-#' Determines the verbosity level. Acceptable values are 0, 1, and 2 for
+#' Determines the verbosity level. Acceptable values are 0, 1, 2, and 3 for
 #' least to most verbosity.
-#' @param checksum
-#' Logical; should numerical variable sums be reported to check input
-#' before and after rebalance?
+#' @param complete.cases
+#' Logical; should rows with one or more NA be removed? Uses function
+#' \code{complete.cases()}.
 #'
 #' @return
 #' TODO
@@ -51,7 +51,7 @@
 #'
 #' @export
 comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
-                       rebalance=TRUE, verbose=0, checksum=FALSE) {
+                       rebalance=TRUE, complete.cases=FALSE, verbose=0, ...) {
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
         comm.stop("argument 'dir' must be a string")
     if (!is.character(pattern) || length(pattern) != 1 || is.na(pattern))
@@ -60,10 +60,11 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
         comm.stop("argument 'readers' must be an integer")
     if (!is.logical(rebalance) || length(rebalance) != 1 || is.na(rebalance))
         comm.stop("argument 'rebalance' must be a bool")
-    if (!(verbose %in% 0:2))
-        comm.stop("argument 'verbose' must be 0, 1, or 2")
-    if (!is.logical(checksum) || length(checksum) != 1 || is.na(checksum))
-        comm.stop("argument 'checksum' must be a bool")
+    if (!is.logical(complete.cases) || length(complete.cases) != 1 ||
+        is.na(complete.cases))
+        comm.stop("argument 'complete.cases' must be a bool")
+    if (!(verbose %in% 0:3))
+        comm.stop("argument 'verbose' must be 0, 1, 2, or 3")
 
     if(verbose) a <- deltime()
     files <- file.info(list.files(dir, pattern=pattern, full.names=TRUE))
@@ -80,87 +81,93 @@ comm.fread <- function(dir, pattern="*.csv", readers=comm.size(),
     if(verbose > 1) for(ifile in my_files)
                       cat(my_rank, rownames(files)[ifile], "\n")
 
-    # TODO if empty? Is length(X) is zero enough?
+    ## now fread all my_files and bind into one local data.frame
     l <- lapply(rownames(files)[my_files], function(file)
-        suppressWarnings(fread(file, showProgress=FALSE)))
+        suppressWarnings(fread(file, showProgress=FALSE, ...)))
     X <- rbindlist(l)
 
+    # TODO if empty? Is length(X) is zero enough?
     ## rank 0 always reads, so it has all attributes. Propagate to NULLs.
     X0 <- bcast(X[0])
     if(length(X) == 0) X <- X0
 
     if(verbose) a <- deltime(a, "T    component fread time:")
 
-    check_sum <- function() {
-        ## Report variable sums to check input
-        my_numeric <- sapply(X, is.numeric)
-        Xnumeric <- which(allreduce(my_numeric, op="land"))
-        colSums(X[, Xnumeric, with=FALSE], na.rm=TRUE)
-    }
-
-    if(checksum) {
-        before_sums <- check_sum()
-        if (verbose) a <- deltime(a, "T    component check_sum time:")
-    }
-
-    if(rebalance) {
-        ## rebalance to all ranks X csv
-        nrow_have <- unlist(allgather(nrow(X)))
-        N <- sum(nrow_have)
-        ## TODO Three nrow_ vectors can be one with a bit more logic
-        nrow_want <- comm.chunk(N, form="number", type="equal",
-                                lo.side="right", all.rank=TRUE)
-        nrow_send <- pmax(nrow_have - nrow_want, 0)
-        nrow_recv <- pmax(nrow_want - nrow_have, 0)
-        if(verbose > 1) {
-            comm.cat("nrow_have:", nrow_have, "\n")
-            comm.cat("nrow_want:", nrow_want, "\n")
-            comm.cat("nrow_send:", nrow_send, "\n")
-            comm.cat("nrow_recv:", nrow_recv, "\n")
-        }
-
-        while(sum(nrow_send)) {
-            recv_i <- 0
-            senders <- (1:comm.size())[nrow_send > 0]
-            for(proc_send in senders) {
-                ## senders and receivers start from 1. Do -1 for rank!
-                receivers <- (1:comm.size())[nrow_recv > 0]
-                if(recv_i < length(receivers)) {
-                    recv_i <- recv_i + 1
-                    count_s <- nrow_send[proc_send]
-                    count_r <- nrow_recv[receivers[recv_i]]
-                    count <- min(count_s, count_r)
-                    if(my_rank + 1 == receivers[recv_i]) {
-                        ## receivers and senders are disjoint sets
-                        buffer <- matrix(NA, count, ncol(X))
-                        buffer <- recv(buffer, rank.source=proc_send - 1)
-                        ## can not use irecv because rbind follows!!
-                        X <- rbind(X, buffer)
-                    }
-                    if(my_rank + 1 == proc_send) {
-                        ## but two senders can be sending to same receiver
-                        isend(X[1:count, ], rank.dest=receivers[recv_i] - 1)
-                        X <- X[-(1:count), ]
-                    }
-                    nrow_recv[receivers[recv_i]] <- count_r - count
-                    nrow_send[proc_send] <- count_s - count
-                }
-            }
-        }
-    }
-    if(verbose) a <- deltime(a, "T    component rebalance time:")
-
-    if(checksum) {
-        after_sums <- check_sum()
-        if (verbose) a <- deltime(a, "T    component check_sum time:")
-        equal <- all.equal(allreduce(before_sums), allreduce(after_sums))
-        comm.cat("checksum equal:", equal, "\n")
-        if (verbose) a <- deltime(a, "T    component check_sum reduce time:")
-    }
-
     if(verbose) {
         nrow_have <- unlist(allgather(nrow(X)))
         comm.cat("nrow_have:", nrow_have, "\n")
+    }
+
+    X
+}
+
+check_sum <- function(X) {
+    ## Report variable sums to check input
+    my_numeric <- sapply(X, is.numeric)
+    Xnumeric <- which(allreduce(my_numeric, op="land"))
+    colSums(X[, Xnumeric, with=FALSE], na.rm=TRUE)
+}
+
+comm.rebalance.df <- function(X, verbose=0, ...) {
+    ## Data frame X has unequal number of rows across ranks. This function
+    ##   balances the rows by sending rows from ranks that have too many to
+    ##   ranks that have too few.
+    ##
+    ## TODO makes copies with rbind(). Should this go into copyless C?
+    ##
+    my_rank <- comm.rank()
+    nrow_have <- unlist(allgather(nrow(X)))
+    N <- sum(nrow_have)
+
+    ## TODO Three nrow_ vectors can be one with a bit more logic
+    nrow_want <- comm.chunk(N, form="number", # type="equal",
+                             all.rank=TRUE, ...)
+    nrow_send <- pmax(nrow_have - nrow_want, 0)
+    nrow_recv <- pmax(nrow_want - nrow_have, 0)
+    if(verbose > 1) {
+        comm.cat("nrow_have:", nrow_have, "\n")
+        comm.cat("nrow_want:", nrow_want, "\n")
+        comm.cat("nrow_send:", nrow_send, "\n")
+        comm.cat("nrow_recv:", nrow_recv, "\n")
+    }
+
+    ## get global numeric column sums for error checking
+    if(verbose > 2) before_sums <- check_sum(X)
+
+    while(sum(nrow_send)) {
+        recv_i <- 0
+        senders <- (1:comm.size())[nrow_send > 0]
+        for(proc_send in senders) {
+            ## senders and receivers start from 1. Do -1 for rank!
+            receivers <- (1:comm.size())[nrow_recv > 0]
+            if(recv_i < length(receivers)) {
+                recv_i <- recv_i + 1
+                count_s <- nrow_send[proc_send]
+                count_r <- nrow_recv[receivers[recv_i]]
+                count <- min(count_s, count_r)
+                if(my_rank + 1 == receivers[recv_i]) {
+                    ## receivers and senders are disjoint sets
+                    buffer <- matrix(NA, count, ncol(X))
+                    buffer <- recv(buffer, rank.source=proc_send - 1)
+                    ## can not use irecv because rbind follows!!
+                    X <- rbind(X, buffer)
+                }
+                if(my_rank + 1 == proc_send) {
+                    ## but two senders can be sending to same receiver
+                    isend(X[1:count, ], rank.dest=receivers[recv_i] - 1)
+                    X <- X[-(1:count), ]
+                }
+                nrow_recv[receivers[recv_i]] <- count_r - count
+                nrow_send[proc_send] <- count_s - count
+            }
+        }
+    }
+
+    ## check if global column sums have not changed
+    if(verbose > 2) {
+        after_sums <- check_sum(X)
+        equal <- all.equal(allreduce(before_sums), allreduce(after_sums))
+        comm.cat("checksum equal:", equal, "on", ncol(X), "columns\n")
     }
 
     X
