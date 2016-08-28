@@ -88,14 +88,18 @@ comm.print(coefs)
 comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
 
-beta.coef <- solve(crossprod(xd_mm), crossprod(xd_mm, yd))
+xtx <- crossprod(xd_mm)
+xty <- crossprod(xd_mm, yd)
+
+beta.coef <- solve(xtx, xty)
 beta <- as.matrix(beta.coef)
+rownames(beta) <- colnames_x_mm
 comm.print(beta)
 a <- deltime(a, "solve crossprod:")
 
-xsvd <- svd(xx)
+xsvd <- svd(xd_mm)
 comm.print(xsvd$d)
-a <- deltime(a, "svd xx:")
+a <- deltime(a, "svd xd_mm:")
 
 
 a <- deltime(a0, "T Total time:")
