@@ -27,13 +27,13 @@ xy_df <- subset(air, select=c(ArrDelay, DayOfWeek, DepTime, DepDelay, Month))
 comm.cat("colnames(xy_df)", colnames(xy_df), "\n", quiet=TRUE)
 
 ## subset complete cases
-comm.print(xy_df[1:5, ], all.rank=TRUE)
+## comm.print(xy_df[1:5, ], all.rank=TRUE)
 comm.cat("nrow: ")
-comm.cat(nrow(xy_df), all.rank=TRUE, quiet=TRUE)
+comm.cat(nrow(xy_df), " ", all.rank=TRUE, quiet=TRUE)
 comm.cat("\n")
 xy_df <- xy_df[complete.cases(xy_df), ]
 comm.cat("nrow: ")
-comm.cat(nrow(xy_df), all.rank=TRUE, quiet=TRUE)
+comm.cat(nrow(xy_df), " ", all.rank=TRUE, quiet=TRUE)
 comm.cat("\n")
 a <- deltime(a, "complete cases subset:")
 
@@ -57,8 +57,6 @@ a <- deltime(a, "factors and transformations:")
 ## create model matrix
 form = ~ DayOfWeek + DepTime + DepDelay + Month
 x_mm <- model.matrix(form, x_df)
-comm.cat(comm.rank(), "class(x_mm)", class(x_mm), "\n", all.rank=TRUE, quiet=TRUE)
-## comm.print(x_mm[1:5, 1:5], all.rank=TRUE)
 a <- deltime(a, "model matrix:")
 
 ## glue x_mm distributed pieces into a ddmatrix
@@ -85,6 +83,7 @@ a <- deltime(a, "xd_mm and yd blockcyclic ddmatrix:")
 
 beta <- lm.fit(xd_mm, yd)
 coefs <- as.matrix(beta$coefficients)
+rownames(beta) <- colnames_x_mm
 comm.print(coefs)
 comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
