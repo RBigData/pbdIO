@@ -28,12 +28,12 @@ comm.cat("colnames(xy_df)", colnames(xy_df), "\n", quiet=TRUE)
 
 ## subset complete cases
 comm.print(xy_df[1:5, ], all.rank=TRUE)
-comm.cat("nrow: (")
-comm.cat(comm.rank(), ",", nrow(xy_df), ") ", all.rank=TRUE, quiet=TRUE)
+comm.cat("nrow: ")
+comm.cat(nrow(xy_df), all.rank=TRUE, quiet=TRUE)
 comm.cat("\n")
 xy_df <- xy_df[complete.cases(xy_df), ]
-comm.cat("nrow: (")
-comm.cat(comm.rank(), ",", nrow(xy_df), ") ", all.rank=TRUE, quiet=TRUE)
+comm.cat("nrow: ")
+comm.cat(nrow(xy_df), all.rank=TRUE, quiet=TRUE)
 comm.cat("\n")
 a <- deltime(a, "complete cases subset:")
 
@@ -55,7 +55,7 @@ x_df$DepTime <- as.numeric(substr(x_df$DepTime, 1, 2))*60 +
 a <- deltime(a, "factors and transformations:")
 
 ## create model matrix
-form = ~ ArrDelay + DayOfWeek + DepTime + DepDelay + Month
+form = ~ DayOfWeek + DepTime + DepDelay + Month
 x_mm <- model.matrix(form, x_df)
 comm.cat(comm.rank(), "class(x_mm)", class(x_mm), "\n", all.rank=TRUE, quiet=TRUE)
 comm.print(x_mm[1:5, 1:5], all.rank=TRUE)
