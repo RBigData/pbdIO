@@ -83,7 +83,7 @@ a <- deltime(a, "xd_mm and yd blockcyclic ddmatrix:")
 
 beta <- lm.fit(xd_mm, yd)
 coefs <- as.matrix(beta$coefficients)
-rownames(beta) <- colnames_x_mm
+rownames(coefs) <- colnames_x_mm
 comm.print(coefs)
 comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
