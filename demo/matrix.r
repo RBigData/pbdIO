@@ -58,7 +58,7 @@ a <- deltime(a, "factors and transformations:")
 form = ~ DayOfWeek + DepTime + DepDelay + Month
 x_mm <- model.matrix(form, x_df)
 comm.cat(comm.rank(), "class(x_mm)", class(x_mm), "\n", all.rank=TRUE, quiet=TRUE)
-comm.print(x_mm[1:5, 1:5], all.rank=TRUE)
+## comm.print(x_mm[1:5, 1:5], all.rank=TRUE)
 a <- deltime(a, "model matrix:")
 
 ## glue x_mm distributed pieces into a ddmatrix
@@ -79,9 +79,9 @@ yd <- new("ddmatrix", Data=y, dim=c(allreduce(nrow(y)), 1),
 print(yd)
 a <- deltime(a, "y new ddmatrix:")
 
-## xd_mmbc <- as.blockcyclic(xd_mm, bldim=c(2, 2))
-## print(dim(submatrix(xd_mmbc)), all.rank=TRUE)
-## a <- deltime(a, "matrix blockcyclic ddmatrix:")
+xd_mm <- as.blockcyclic(xd_mm, bldim=c(2, 2))
+yd <- as.blockcyclic(yd, bldim=c(2, 2))
+a <- deltime(a, "xd_mm and yd blockcyclic ddmatrix:")
 
 beta <- lm.fit(xd_mm, yd)
 coefs <- as.matrix(beta$coefficients)
