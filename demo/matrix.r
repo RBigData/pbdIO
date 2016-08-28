@@ -21,73 +21,75 @@ dir <- "/lustre/atlas/scratch/ost/stf006/airline"
 air <- comm.fread(dir, verbose=3, colClasses=col_classes)
 a <- deltime(a, "T Total comm.fread:")
 
-## for the matrix example, do pca on all data, projecting airports
-## into a 2d picture. Take all numerical variables, compute PCA, and
-## plot airport labels in the first two pc space.
-
-## select the numeric columns
-## comm.cat(comm.rank(), "col.classes(air)", unlist(lapply(air, class)), "\n", quiet=TRUE, all.rank=TRUE)
-## airnames <- colnames(air)
-## numeric <- unlist(allreduce(sapply(air, is.numeric), op="land"))
-
 ## variables from the R Journal iodata article. Select for complete cases
 ##   rebalancing
-air_reg_df <- subset(air, select=c(ArrDelay, DayOfWeek, DepTime, DepDelay, Month))
-comm.cat("colnames(air_reg_df)", colnames(air_reg_df), "\n", quiet=TRUE)
+xy_df <- subset(air, select=c(ArrDelay, DayOfWeek, DepTime, DepDelay, Month))
+comm.cat("colnames(xy_df)", colnames(xy_df), "\n", quiet=TRUE)
 
 ## subset complete cases
-###!!!### replace with dplyr complete cases
-comm.print(air_reg_df[1:5, ], all.rank=TRUE)
-comm.cat(comm.rank(), "nrow:", nrow(air_reg_df), "\n", all.rank=TRUE, quiet=TRUE)
-air_reg_df <- air_reg_df[complete.cases(air_reg_df), ]
-comm.cat(comm.rank(), "nrow:", nrow(air_reg_df), "\n", all.rank=TRUE, quiet=TRUE)
+comm.print(xy_df[1:5, ], all.rank=TRUE)
+comm.cat("nrow: (")
+comm.cat(comm.rank(), ",", nrow(xy_df), ") ", all.rank=TRUE, quiet=TRUE)
+comm.cat("\n")
+xy_df <- xy_df[complete.cases(xy_df), ]
+comm.cat("nrow: (")
+comm.cat(comm.rank(), ",", nrow(xy_df), ") ", all.rank=TRUE, quiet=TRUE)
+comm.cat("\n")
 a <- deltime(a, "complete cases subset:")
 
 ## now rebalance after subsettng!
-air_reg_df <- pbdIO:::comm.rebalance.df(air_reg_df, lo.side="right", type="equal", verbose=3)
+xy_df <- pbdIO:::comm.rebalance.df(xy_df, lo.side="right", type="equal", verbose=1)
 a <- deltime(a, "rebalance:")
 
-## from the R Journal iodata article
-form = ~ ArrDelay + DayOfWeek + DepTime + DepDelay + Month
+## separate x and y
+x_df <- subset(xy_df, select=c(DayOfWeek, DepTime, DepDelay, Month))
+y_df <- subset(xy_df, select=c(ArrDelay))
+a <- deltime(a, "separate x and y df:")
+
 ## transform some variables
-air_reg_df$DayOfWeek <- factor(air_reg_df$DayOfWeek, levels=1:7)
-air_reg_df$Month <- factor(air_reg_df$Month, levels=1:12)
-air_reg_df$DepTime <- sprintf("%04d", air_reg_df$DepTime)
-air_reg_df$DepTime <- as.numeric(substr(air_reg_df$DepTime, 1, 2))*60 +
-    as.numeric(substr(air_reg_df$DepTime, 3, 4))
-comm.print(air_reg_df[1:5, 1:5], all.rank=TRUE)
+x_df$DayOfWeek <- factor(x_df$DayOfWeek, levels=1:7)
+x_df$Month <- factor(x_df$Month, levels=1:12)
+x_df$DepTime <- sprintf("%04d", x_df$DepTime)
+x_df$DepTime <- as.numeric(substr(x_df$DepTime, 1, 2))*60 +
+    as.numeric(substr(x_df$DepTime, 3, 4))
 a <- deltime(a, "factors and transformations:")
 
-amm <- model.matrix(form, air_reg_df)
-comm.cat(comm.rank(), "class(amm)", class(amm), "\n", all.rank=TRUE, quiet=TRUE)
-comm.print(amm[1:5, 1:5], all.rank=TRUE)
+## create model matrix
+form = ~ ArrDelay + DayOfWeek + DepTime + DepDelay + Month
+x_mm <- model.matrix(form, x_df)
+comm.cat(comm.rank(), "class(x_mm)", class(x_mm), "\n", all.rank=TRUE, quiet=TRUE)
+comm.print(x_mm[1:5, 1:5], all.rank=TRUE)
 a <- deltime(a, "model matrix:")
 
-dimnames(amm) <- NULL
-amm.d <- new("ddmatrix", Data=amm,
-                 dim=c(allreduce(nrow(amm)), ncol(amm)),
-                 ldim=dim(amm), bldim=dim(amm), ICTXT=2)
-comm.print(submatrix(amm.d)[1:5, 1:5], all.rank=TRUE)
-print(amm.d)
-a <- deltime(a, "matrix new ddmatrix:")
+## glue x_mm distributed pieces into a ddmatrix
+colnames_x_mm <- colnames(x_mm)
+comm.cat("colnames_x_mm:", colnames_x_mm, "\n")
+dimnames(x_mm) <- NULL
+xd_mm <- new("ddmatrix", Data=x_mm, dim=c(allreduce(nrow(x_mm)), ncol(x_mm)),
+             ldim=dim(x_mm), bldim=dim(x_mm), ICTXT=2)
+## comm.print(submatrix(xd_mm)[1:5, 1:5], all.rank=TRUE)
+print(xd_mm)
+a <- deltime(a, "xd_mm new ddmatrix:")
 
-amm.dbc <- as.blockcyclic(amm.d, bldim=c(2, 2))
-print(dim(submatrix(amm.dbc)), all.rank=TRUE)
-a <- deltime(a, "matrix blockcyclic ddmatrix:")
+## glue y distributed pieces into a ddmatrix
+y <- as.matrix(y_df)
+dimnames(y) <- NULL
+yd <- new("ddmatrix", Data=y, dim=c(allreduce(nrow(y)), 1),
+             ldim=dim(y), bldim=dim(y), ICTXT=2)
+print(yd)
+a <- deltime(a, "y new ddmatrix:")
 
-xx <- amm.dbc[, -2]
-yy <- amm.dbc[, 2]
-comm.print(dim(xx))
-comm.print(dim(yy))
-a <- deltime(a, "select columns:")
+## xd_mmbc <- as.blockcyclic(xd_mm, bldim=c(2, 2))
+## print(dim(submatrix(xd_mmbc)), all.rank=TRUE)
+## a <- deltime(a, "matrix blockcyclic ddmatrix:")
 
-beta <- lm.fit(amm.dbc[, -2], amm.dbc[, 2])
+beta <- lm.fit(xd_mm, yd)
 coefs <- as.matrix(beta$coefficients)
 comm.print(coefs)
 comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
-### !!! ### singal 11 here on 32 cores of 2 nodes - 12 GB x 10?
-beta.coef <- solve(crossprod(xx), crossprod(xx, yy))
+
+beta.coef <- solve(crossprod(xd_mm), crossprod(xd_mm, yd))
 beta <- as.matrix(beta.coef)
 comm.print(beta)
 a <- deltime(a, "solve crossprod:")
@@ -96,13 +98,6 @@ xsvd <- svd(xx)
 comm.print(xsvd$d)
 a <- deltime(a, "svd xx:")
 
-## redy for regression. use column indices to select response etc.
-
-air_cross <- crossprod(amm.dbc)
-print(air_cross)
-a <- deltime(a, "matrix crossprod ddmatrix:")
-
-library(pbdML)
 
 a <- deltime(a0, "T Total time:")
 finalize()
