@@ -26,11 +26,10 @@ a <- deltime(a, "T Total comm.fread:")
 ## plot airport labels in the first two pc space.
 
 ## select the numeric columns
-comm.cat(comm.rank(), "col.classes(air)", unlist(lapply(air, class)), "\n", quiet=TRUE, all.rank=TRUE)
-airnames <- colnames(air)
-numeric <- unlist(allreduce(sapply(air, is.numeric), op="land"))
-comm.cat("numeric\n", quiet=TRUE)
-comm.cat("num", as.integer(numeric), "\n", quiet=TRUE)
+## comm.cat(comm.rank(), "col.classes(air)", unlist(lapply(air, class)), "\n", quiet=TRUE, all.rank=TRUE)
+## airnames <- colnames(air)
+## numeric <- unlist(allreduce(sapply(air, is.numeric), op="land"))
+
 ## variables from the R Journal iodata article. Select for complete cases
 ##   rebalancing
 air_reg_df <- subset(air, select=c(ArrDelay, DayOfWeek, DepTime, DepDelay, Month))
@@ -87,7 +86,7 @@ coefs <- as.matrix(beta$coefficients)
 comm.print(coefs)
 comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
-
+### !!! ### singal 11 here on 32 cores of 2 nodes - 12 GB x 10?
 beta.coef <- solve(crossprod(xx), crossprod(xx, yy))
 beta <- as.matrix(beta.coef)
 comm.print(beta)
