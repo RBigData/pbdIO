@@ -4,8 +4,8 @@
 \alias{comm.fread}
 \title{comm.fread}
 \usage{
-comm.fread(dir, pattern = "*.csv", readers = comm.size(),
-  rebalance = TRUE, verbose = 0, checksum = TRUE)
+comm.fread(dir, pattern = "*.csv$", readers = comm.size(), verbose = 0,
+  ...)
 }
 \arguments{
 \item{dir}{A directory containing the files desired to be read.  The directory
@@ -15,14 +15,10 @@ should be accessible to all readers.}
 
 \item{readers}{The number of readers.}
 
-\item{rebalance}{Logical; should all ranks "balance" the return, meaning each has
-roughly the same number of rows?}
-
-\item{verbose}{Determines the verbosity level. Acceptable values are 0, 1, and 2 for
+\item{verbose}{Determines the verbosity level. Acceptable values are 0, 1, 2, and 3 for
 least to most verbosity.}
 
-\item{checksum}{Logical; should numerical variable sums be reported to check input 
-before and after rebalance?}
+\item{...}{Additional arguments to be passed to \code{data.table::fread()}.}
 }
 \value{
 TODO
@@ -56,4 +52,3 @@ finalize()
 }
 
 }
-

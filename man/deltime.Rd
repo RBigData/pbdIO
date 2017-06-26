@@ -17,4 +17,3 @@ deltime(ltime = proc.time()["elapsed"], text = NULL)
 \description{
 deltime
 }
-
