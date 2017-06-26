@@ -1,0 +1,14 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("{R} package version %s", meta$Version)
+
+
+citEntry(
+  entry = "Misc",
+  title = "{pbdIO}: Programming with Big Data -- I/O Tools",
+  author = personList(as.person("George Ostrouchov")),
+  year = year,
+  note = note,
+  url = "https://cran.r-project.org/package=pbdIO",
+  textVersion = NULL,
+  key = "pbdIO"
+)
