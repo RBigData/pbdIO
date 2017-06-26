@@ -42,7 +42,6 @@
 #' }
 #'
 #' @importFrom data.table fread rbindlist
-#'
 #' @export
 comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
                        verbose=0, ...) {
