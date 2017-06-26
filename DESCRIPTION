@@ -1,5 +1,5 @@
 Package: pbdIO
-Title: Programming with Big Data -- Input-Output
+Title: Programming with Big Data -- I/O Tools
 Description: An interface to parallel input output packages
     with a focus on Single Program/Multiple Data ('SPMD')
     parallel programming style, which is intended for batch parallel
@@ -11,14 +11,15 @@ Depends:
     pbdMPI (>= 0.3.2)
 Imports:
     data.table (>= 1.9.4)
-Enhances: pbdNCDF4, pbdADIOS
+Suggests:
+    pbdNCDF4
 ByteCompile: yes
-Authors@R: c(person("George", "Ostrouchov", role = c("aut", "cre"), email =
-    "ostrouchovg@ornl.gov"),
+Authors@R: c(
+    person("George", "Ostrouchov", role = c("aut", "cre"), email = "ostrouchovg@ornl.gov"),
     person("Drew", "Schmidt", role="ctb"))
 URL: http://r-pbd.org/
 BugReports: http://group.r-pbd.org/
 MailingList: Please send questions and comments regarding pbdR to
     RBigData@gmail.com
 Maintainer: George Ostrouchov <ostrouchovg@ornl.gov>
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
