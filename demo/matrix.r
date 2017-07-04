@@ -89,7 +89,9 @@ comm.print(names(beta))
 a <- deltime(a, "lm.fit:")
 
 xtx <- crossprod(xd_mm)
+print(xtx)
 xty <- crossprod(xd_mm, yd)
+print(xty)
 
 beta.coef <- solve(xtx, xty)
 beta <- as.matrix(beta.coef)
