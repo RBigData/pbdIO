@@ -43,8 +43,13 @@ comm.quantile <- function(x, probs=seq(0, 1, 0.25), na.rm=FALSE, names=TRUE,
     if (probs[i] <= 1.0/N){
       q_val <- c(q_val, q_lo);
     }else{
-      q <- uniroot(f.quant, c(q_lo, q_hi), prob=probs[i])
-      q_val <- c(q_val, q$root)
+      sm = allreduce(sum(x <= probs[i], na.rm=TRUE), op="sum");
+      if (sm == 0){
+        q_val <- c(q_val, q_lo);
+      }else{
+        q <- uniroot(f.quant, c(q_lo, q_hi), prob=probs[i])
+        q_val <- c(q_val, q$root)
+      }
     }
   }
   names(q_val) <- q_names
