@@ -13,6 +13,8 @@
 #' @param verbose
 #' Determines the verbosity level. Acceptable values are 0, 1, 2, and 3 for
 #' least to most verbosity.
+#' @param ...
+#' Additional arguments to be passed to \code{data.table::fread()}.
 #'
 #' @return
 #' TODO
@@ -42,7 +44,6 @@
 #' }
 #'
 #' @importFrom data.table fread rbindlist
-#'
 #' @export
 comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
                        verbose=0, ...) {

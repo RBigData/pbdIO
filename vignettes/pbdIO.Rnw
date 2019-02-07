@@ -1,0 +1,47 @@
+%\VignetteIndexEntry{Guide to the pbdIO Package}
+\documentclass[]{article}
+
+\input{./include/settings}
+\newcommand{\pkg}[1]{\textbf{#1}}
+
+
+\mytitle{Guide to the pbdIO Package}
+\mysubtitle{}
+\myversion{0.1-0}
+\myauthor{
+\centering
+George Ostrouchov \\ 
+\texttt{ostrouchovg@ornl.gov} 
+}
+
+
+
+\begin{document}
+
+% \begin{figure}[ht]
+% \vspace{-.5in}
+%   \begin{minipage}[c]{8.5in}
+%   \hspace{-1.0in}
+%   \includegraphics[width=8in,height=10in]{./cover/kazaam.pdf}
+%   \end{minipage}
+% \end{figure}
+
+\makefirstfew
+
+
+
+
+\section{Introduction}
+\label{sec:intro}
+
+The \pkg{pbdIO} package~\cite{pbdIO} is \dots
+
+
+
+
+\addcontentsline{toc}{section}{References}
+\bibliography{./include/pbdIO}
+\bibliographystyle{plain}
+
+
+\end{document}
