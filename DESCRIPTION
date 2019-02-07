@@ -16,7 +16,7 @@ Suggests:
 ByteCompile: yes
 Authors@R: c(
     person("George", "Ostrouchov", role = c("aut", "cre"), email = "ostrouchovg@ornl.gov"),
-    person("Drew", "Schmidt", role="ctb"))
+    person("Drew", "Schmidt", role="ctb"),
     person("Wei-Chen", "Chen", role="ctb"))
 URL: http://r-pbd.org/
 BugReports: http://group.r-pbd.org/
