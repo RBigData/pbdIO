@@ -39,6 +39,7 @@
 #' or a list of vectors, respectively.
 #'
 #' @examples
+#' \dontrun{
 #' ## Note that the p and rank parameters are provided by comm.size() and
 #' ## comm.rank(), respectively, when running SPMD in parallel. Normally, they
 #' ## are not specified unless testing in serial mode.
@@ -48,6 +49,7 @@
 #' comm.chunk(16, type="equal", all.rank=TRUE, p=5)
 #' comm.chunk(16, type="equal", lo.side="right", all.rank=TRUE, p=5)
 #' comm.chunk(16, p=5, rank=0)
+#' }
 #'
 #' @export
 comm.chunk <- function(N, form="number", type="balance", lo.side="right",

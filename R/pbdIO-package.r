@@ -5,7 +5,7 @@
 #' parallel programming style, which is intended for batch parallel
 #' execution.
 #' 
-#' @references Project URL: \url{https://github.com/RBigData/remoter}
+#' @references Project URL: \url{https://github.com/RBigData/pbdIO}
 #' @author George Ostrouchov
 #' 
 #' @name pbdIO-package
