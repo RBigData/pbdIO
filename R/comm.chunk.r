@@ -3,15 +3,17 @@
 #' Given a total number of items, comm.chunk splits the number into
 #' chunks. Tailored especially for situations in SPMD style
 #' programming. Warious options are possible when the number does not
-#' split evenly into chunks. The output form can be either a number or
-#' a vector of items.
+#' split evenly into chunks. The output form can be a number,
+#' a vector of items, or a few other special forms intended for other
+#' pbdR components.
 #'
 #' @param N
 #' The number of items to split into chunks.
 #' @param form
 #' Output a chunk as a single "number", as a "vector" of contiguous
 #' items from 1:N, or as an "iopair" giving offset and length in a
-#' file.
+#' file. Forms "ldim" and "bldim" are available only with type "equal" and are
+#' intended for setting "ddmatrix" (see package pbdDMAT) slots.
 #' @param type
 #' Either "balance" the chunks so they differ by no more than 1 item (used most
 #' frequently for best balance) or force as many as possible to be "equal" with
@@ -51,8 +53,8 @@
 comm.chunk <- function(N, form="number", type="balance", lo.side="right",
                        all.rank=FALSE, p=comm.size(), rank=comm.rank()) {
 
-    form <- comm.match.arg(form, c("number", "vector", "iopair"))
-    type <- comm.match.arg(type, c("balance", "equal", "ldim", "bldim"))
+    form <- comm.match.arg(form, c("number", "vector", "iopair", "ldim", "bldim"))
+    type <- comm.match.arg(type, c("balance", "equal"))
     lo.side <- comm.match.arg(lo.side, c("right", "left"))
     if (!is.logical(all.rank) || length(all.rank) != 1 || is.na(all.rank))
         comm.stop("argument 'all.rank' must be a bool")
@@ -60,6 +62,10 @@ comm.chunk <- function(N, form="number", type="balance", lo.side="right",
         comm.stop("argument 'p' must be a positive integer")
     if (!is.numeric(rank) || rank < 0 || rank >= p)
         comm.stop("argument 'rank' must be an integer from 0 to p-1")
+    if (form == "ldim" | form == "bldim") {
+       if(type != "equal")
+          comm.stop(paste0("form ", form, " only available for type equal"))
+    }
 
     p <- as.integer(p)
     rank <- as.integer(rank)
@@ -79,7 +85,7 @@ comm.chunk <- function(N, form="number", type="balance", lo.side="right",
             } else if(lo.side == "left") {
                 items[(p - rem + 1):p] <- base + 1
             }
-        } else if(type == "equal" | type == "ldim") { ## fix for bldim!!!
+        } else if(type == "equal") {
             items <- items + 1
             rem <- p*(base + 1) - N
             if(lo.side == "right") {
@@ -104,12 +110,16 @@ comm.chunk <- function(N, form="number", type="balance", lo.side="right",
 
     ## check if all allocated
     if(sum(items) != N) cat("warning: comm.chunk rank", comm.rank(),
-        "split does not add up!\n")
+              "split does not add up!\n")
 
     ## now output in correct form
-    if(form == "number") {
+    if(form == "number" | form == "ldim") {
         if(all.rank) ret <- items
         else ret <- items[rank + 1]
+    } else if(form == "bldim") {
+          items <- rep(max(items), length(items))
+          if(all.rank) ret <- items
+          else ret <- items[rank + 1]
     } else if(form == "vector") {
         items_base <- c(0, cumsum(items)[-p])
         if(all.rank) ret <- lapply(1:length(items_base),

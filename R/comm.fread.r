@@ -157,6 +157,9 @@ comm.rebalance.df <- function(X, verbose=0, ...) {
         after_sums <- check_sum(X)
         equal <- all.equal(allreduce(before_sums), allreduce(after_sums))
         comm.cat("checksum equal:", equal, "on", ncol(X), "columns\n")
+    } else if(verbose > 1) {
+        nrow_have <- unlist(allgather(nrow(X)))
+        comm.cat("nrow_have:", nrow_have, "\n")
     }
 
     X

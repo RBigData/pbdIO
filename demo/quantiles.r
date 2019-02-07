@@ -12,7 +12,7 @@ comm.quantile <- function(x, probs=seq(0, 1, 0.25), na.rm=FALSE, names=TRUE,
   N <- allreduce(length(x)) - allreduce(sum(is.na(x)))
   probs <- sort(probs)
   np <- length(probs)
-  
+
   ## TODO is there a native R function for this?
   format_perc <- function(x, digits = max(2L, getOption("digits")),
                           probability = TRUE, use.fC = length(x) < 100, ...) {
@@ -26,11 +26,11 @@ comm.quantile <- function(x, probs=seq(0, 1, 0.25), na.rm=FALSE, names=TRUE,
     else character(0)
   }
   q_names <- format_perc(probs)
-  
+
   f.quant <- function(q, prob) {
     allreduce(sum(x <= q, na.rm=TRUE), op="sum")/N - prob
   }
-  
+
   q_val <- NULL
   q_lo <- allreduce(min(x, na.rm=na.rm), op="min")
   q_hi <- allreduce(max(x, na.rm=na.rm), op="max")
@@ -58,7 +58,7 @@ a0 <- a <- deltime()
 ###   lustre.
 ###
 
-air <- comm.fread(dir, verbose=1, rebalance=TRUE, checksum=TRUE)
+air <- comm.fread(dir, verbose=1)
 a <- deltime(a, "T Total comm.fread:")
 
 ## TODO set up a communicator on the fly that includes only non-empties.
