@@ -9,3 +9,7 @@
 *.backup
 
 inst/doc
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
