@@ -72,6 +72,9 @@ comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
                       cat(my_rank, rownames(files)[ifile], "\n")
 
     ## now fread all my_files and bind into one local data.frame
+    ## FIXME Currently, there is sometimes a problem with having fewer
+    ##       files than ranks and readers = 1. Probably in fread with
+    ##       a null file name.
     l <- lapply(rownames(files)[my_files], function(file)
         suppressWarnings(fread(file, showProgress=FALSE, ...)))
     X <- rbindlist(l)
