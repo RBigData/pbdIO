@@ -30,11 +30,11 @@
 #' each containing the output for the corresponding rank.
 #' @param p
 #' The number of chunks (processors). Normally, it is NOT specified and defaults
-#' to comm.size(comm).
+#' to NULL, which assigns comm.size(comm).
 #' @param rank
 #' The rank of returned chunk. Normally, it is NOT specified and defaults to
-#' comm.rank(comm)). Note that ranks are numbered from 0 to p-1, whereas the list
-#' elements for all.rank=TRUE are numbered 1 to p.
+#' NULL, which assigns comm.rank(comm)). Note that ranks are numbered from 0 to
+#' p-1, whereas the list elements for all.rank=TRUE are numbered 1 to p.
 #'
 #' @return
 #' A numeric value from 0:N or a vector giving a subset of 1:N (depending on
