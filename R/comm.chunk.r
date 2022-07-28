@@ -30,7 +30,7 @@
 #' each containing the output for the corresponding rank.
 #' @param p
 #' The number of chunks (processors). Normally, it is NOT specified and defaults
-#' to NULL, which assigns comm.size(comm).
+#' to NULL, which assigns comm.size(comm). 
 #' @param rank
 #' The rank of returned chunk. Normally, it is NOT specified and defaults to
 #' NULL, which assigns comm.rank(comm)). Note that ranks are numbered from 0 to
