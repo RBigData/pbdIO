@@ -59,7 +59,11 @@
 comm.chunk = function(N, form="number", type="balance", lo.side="right",
                       all.rank=FALSE, p = NULL, rank = NULL,
                       comm = .pbd_env$SPMD.CT$comm) {
-
+  
+    ## Normally, these are input NULL and assigned from comm
+    if(is.null(p)) p = comm.size(comm)
+    if(is.null(rank)) rank = comm.rank(comm)
+  
     form = comm.match.arg(form, c("number", "vector", "iopair", "ldim", "bldim"),
                           comm = comm)
     type = comm.match.arg(type, c("balance", "equal", "cycle"), comm = comm)
@@ -76,10 +80,6 @@ comm.chunk = function(N, form="number", type="balance", lo.side="right",
     }
     if(type == "cycle" & form == "number")
         comm.stop("type 'cycle' only available with form 'vector'")
-
-    ## Normally, these are input NULL and assigned from comm
-    if(is.null(p)) p = comm.size(comm)
-    if(is.null(rank)) rank = comm.rank(comm)
     
     base = N %/% p
     rem = N - base*p
