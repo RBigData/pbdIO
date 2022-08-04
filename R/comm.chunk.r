@@ -35,11 +35,18 @@
 #' The rank of returned chunk. Normally, it is NOT specified and defaults to
 #' NULL, which assigns comm.rank(comm)). Note that ranks are numbered from 0 to
 #' p-1, whereas the list elements for all.rank=TRUE are numbered 1 to p.
+#' @param comm
+#' The communicator across which the split will be taken.
 #'
 #' @return
 #' A numeric value from 0:N or a vector giving a subset of 1:N (depending on
 #' form) for the rank. If all.rank is TRUE, a vector or a list of
 #' vectors, respectively.
+#' 
+#' If the communicator was divided with comm.split(), the chunking is done 
+#' within all sub-communicators respective to their size. This is useful for 
+#' setting up collective operations that take place on disjoint subsets of 
+#' ranks.
 #'
 #' @examples
 #' \dontrun{
