@@ -4,8 +4,7 @@
 \alias{comm.fread}
 \title{comm.fread}
 \usage{
-comm.fread(dir, pattern = "*.csv$", readers = comm.size(), verbose = 0,
-  ...)
+comm.fread(dir, pattern = "*.csv$", readers = comm.size(), verbose = 0, ...)
 }
 \arguments{
 \item{dir}{A directory containing the files desired to be read.  The directory
