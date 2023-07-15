@@ -8,6 +8,13 @@
 #' should be accessible to all readers.
 #' @param pattern
 #' The pattern for files desired to be read.
+#' @param shcom 
+#' Additional shell command passed to `fread`'s `com` parameter as: 
+#' `fread(cmd = paste(shcom, file)`, where file is assigned based on rank. For
+#' example if `grep <pattern> <file>` is needed, set `shcom = "grep <pattern>`.
+#' Our Lustre file system had an odd interaction on first reads with 
+#' `fread` and worked 5x faster with `shcom = "cat"` than without it (not 
+#' an issue on NFS file systems).
 #' @param readers
 #' The number of readers.
 #' @param verbose
