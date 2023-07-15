@@ -1,9 +1,8 @@
 Package: pbdIO
 Title: Programming with Big Data -- I/O Tools
 Description: An interface to parallel input output packages
-    with a focus on Single Program/Multiple Data ('SPMD')
-    parallel programming style, which is intended for batch parallel
-    execution.
+    aimed at cluster computers and intended for batch parallel MPI-based
+    execution. (csv implemented, ADIOS2 (see "RBigData/hola") and hdf5 planned)
 Version: 0.2-0
 License: Mozilla Public License 2.0
 Depends:
