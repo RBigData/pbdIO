@@ -45,7 +45,7 @@
 #'
 #' @importFrom data.table fread rbindlist
 #' @export
-comm.fread <- function(dir, pattern="*.csv$", com = NULL, readers=comm.size(),
+comm.fread <- function(dir, pattern="*.csv$", cmd = NULL, readers=comm.size(),
                        verbose=0, ...) {
     if(verbose) print(c(as.list(environment()), list(...)))
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
@@ -78,12 +78,12 @@ comm.fread <- function(dir, pattern="*.csv$", com = NULL, readers=comm.size(),
     ## FIXME Currently, there is sometimes a problem with having fewer
     ##       files than ranks and readers = 1. Probably in fread with
     ##       a null file name.
-    if(is.null(com)) {
+    if(is.null(cmd)) {
       l <- lapply(rownames(files)[my_files], function(file)
           suppressWarnings(fread(file, showProgress=FALSE, ...)))
     } else {
       l <- lapply(rownames(files)[my_files], function(file)
-        suppressWarnings(fread(com = paste(com, file),
+        suppressWarnings(fread(com = paste(cmd, file),
                                showProgress=FALSE, ...)))
     }
     X <- rbindlist(l)
