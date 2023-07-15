@@ -4,11 +4,11 @@ Description: An interface to parallel input output packages
     with a focus on Single Program/Multiple Data ('SPMD')
     parallel programming style, which is intended for batch parallel
     execution.
-Version: 0.1-1
+Version: 0.2-0
 License: Mozilla Public License 2.0
 Depends:
-    R (>= 3.0.0),
-    pbdMPI (>= 0.3.2)
+    R (>= 3.6.0),
+    pbdMPI (>= 0.4.6)
 Imports:
     data.table (>= 1.9.4)
 Suggests:
@@ -23,4 +23,4 @@ BugReports: http://group.r-pbd.org/
 MailingList: Please send questions and comments regarding pbdR to
     RBigData@gmail.com
 Maintainer: George Ostrouchov <ostrouchovg@ornl.gov>
-RoxygenNote: 6.0.1
+RoxygenNote: 7.2.3
