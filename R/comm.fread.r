@@ -1,7 +1,7 @@
 #' comm.fread
 #'
 #' Given a directory, \code{comm.fread()} reads all csv files contained
-#' in it in parallel with available resources.
+#' in it in parallel with available resources. 
 #'
 #' @param dir
 #' A directory containing the files desired to be read.  The directory
@@ -24,6 +24,14 @@
 #' least to most verbosity.
 #' @param ...
 #' Additional arguments to be passed to \code{data.table::fread()}.
+#' 
+#' @details
+#' Each MPI rank reads different but
+#' entire files. Best load balance is achieved when the number of files is 
+#' divisible by the number of ranks and the files are approximately the same 
+#' size. All files are assumed to contain the same columns. See note for 
+#' parameter \code{shcom} if you are working with a Lustre parallel file 
+#' system.
 #'
 #' @return
 #' TODO
@@ -119,6 +127,7 @@ check_sum <- function(X) {
     colSums(X[, Xnumeric, with=FALSE], na.rm=TRUE)
 }
 
+## TODO document and export this function
 comm.rebalance.df <- function(X, verbose=0, ...) {
     ## Data frame X has unequal number of rows across ranks. This function
     ##   balances the rows by sending rows from ranks that have too many to

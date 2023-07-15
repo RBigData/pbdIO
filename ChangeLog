@@ -1,5 +1,7 @@
 Release 0.2-0:
-  * comm.chunk improved and moved to pbdMPI
+  * comm.chunk improved and moved to package pbdMPI
+  * parameter `shcom` added to `comm.fread`
+  * `deltime` function no longer exported
 Release 0.1-1:
   * Added more chunking options and documentation
 Release 0.1-0:

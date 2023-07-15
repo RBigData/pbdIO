@@ -42,6 +42,14 @@ TODO
 Given a directory, \code{comm.fread()} reads all csv files contained
 in it in parallel with available resources.
 }
+\details{
+Each MPI rank reads different but
+entire files. Best load balance is achieved when the number of files is 
+divisible by the number of ranks and the files are approximately the same 
+size. All files are assumed to contain the same columns. See note for 
+parameter \code{shcom} if you are working with a Lustre parallel file 
+system.
+}
 \examples{
 \dontrun{
 ### Save code in a file "demo.r" and run with 2 processors by
