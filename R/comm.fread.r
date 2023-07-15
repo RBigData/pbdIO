@@ -45,7 +45,7 @@
 #'
 #' @importFrom data.table fread rbindlist
 #' @export
-comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
+comm.fread <- function(dir, pattern="*.csv$", com = NULL, readers=comm.size(),
                        verbose=0, ...) {
     if(verbose) print(c(as.list(environment()), list(...)))
     if (!is.character(dir) || length(dir) != 1 || is.na(dir))
@@ -68,7 +68,9 @@ comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
     my_rank <- comm.rank()
     my_files <- comm.chunk(nrow(files), p=readers, lo.side="right",
                            form="vector")
-    if(verbose) comm.print(my_files, all.rank=TRUE)
+    if(verbose) comm.cat("rank:", my_rank, "files:", 
+                         paste(my_files, collapse = " "), 
+                         all.rank=TRUE, quiet = TRUE)
     if(verbose > 1) for(ifile in my_files)
                       cat(my_rank, rownames(files)[ifile], "\n")
 
@@ -76,8 +78,14 @@ comm.fread <- function(dir, pattern="*.csv$", readers=comm.size(),
     ## FIXME Currently, there is sometimes a problem with having fewer
     ##       files than ranks and readers = 1. Probably in fread with
     ##       a null file name.
-    l <- lapply(rownames(files)[my_files], function(file)
-        suppressWarnings(fread(file, showProgress=FALSE, ...)))
+    if(is.null(com)) {
+      l <- lapply(rownames(files)[my_files], function(file)
+          suppressWarnings(fread(file, showProgress=FALSE, ...)))
+    } else {
+      l <- lapply(rownames(files)[my_files], function(file)
+        suppressWarnings(fread(com = paste(com, file),
+                               showProgress=FALSE, ...)))
+    }
     X <- rbindlist(l)
 
     # TODO if empty? Is length(X) is zero enough?
