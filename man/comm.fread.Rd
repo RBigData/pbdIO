@@ -24,9 +24,9 @@ should be accessible to all readers.}
 For example if \code{grep <pattern> <file>} is needed, 
 set \code{shcom = "grep <pattern>"}.
 (Lustre note: Our Lustre file system had an odd interaction on first reads 
-with \code{fread} and worked 5x faster with \code{shcom = "cat"} than 
-without it. Second reads were 10x faster. This was not an issue on NFS file 
-systems).}
+of a 5 GB file with \code{fread} and worked 5x faster with 
+\code{shcom = "cat"} than without it. Second reads were 10x faster. No such
+slowdown was observed on NFS file systems).}
 
 \item{readers}{The number of readers.}
 
