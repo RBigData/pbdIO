@@ -9,12 +9,14 @@
 #' @param pattern
 #' The pattern for files desired to be read.
 #' @param shcom 
-#' Additional shell command passed to `fread`'s `com` parameter as: 
-#' `fread(cmd = paste(shcom, file)`, where file is assigned based on rank. For
-#' example if `grep <pattern> <file>` is needed, set `shcom = "grep <pattern>`.
-#' Our Lustre file system had an odd interaction on first reads with 
-#' `fread` and worked 5x faster with `shcom = "cat"` than without it (not 
-#' an issue on NFS file systems).
+#' Additional shell command passed to \code{fread}'s \code{com} parameter as: 
+#' \code{fread(cmd = paste(shcom, file)}, where file is assigned based on rank.
+#' For example if \code{grep <pattern> <file>} is needed, 
+#' set \code{shcom = "grep <pattern>"}.
+#' (Lustre note: Our Lustre file system had an odd interaction on first reads 
+#' with \code{fread} and worked 5x faster with \code{shcom = "cat"} than 
+#' without it. Second reads were 10x faster. This was not an issue on NFS file 
+#' systems).
 #' @param readers
 #' The number of readers.
 #' @param verbose

@@ -4,13 +4,29 @@
 \alias{comm.fread}
 \title{comm.fread}
 \usage{
-comm.fread(dir, pattern = "*.csv$", readers = comm.size(), verbose = 0, ...)
+comm.fread(
+  dir,
+  pattern = "*.csv$",
+  shcom = NULL,
+  readers = comm.size(),
+  verbose = 0,
+  ...
+)
 }
 \arguments{
 \item{dir}{A directory containing the files desired to be read.  The directory
 should be accessible to all readers.}
 
 \item{pattern}{The pattern for files desired to be read.}
+
+\item{shcom}{Additional shell command passed to \code{fread}'s \code{com} parameter as: 
+\code{fread(cmd = paste(shcom, file)}, where file is assigned based on rank.
+For example if \code{grep <pattern> <file>} is needed, 
+set \code{shcom = "grep <pattern>"}.
+(Lustre note: Our Lustre file system had an odd interaction on first reads 
+with \code{fread} and worked 5x faster with \code{shcom = "cat"} than 
+without it. Second reads were 10x faster. This was not an issue on NFS file 
+systems).}
 
 \item{readers}{The number of readers.}
 
