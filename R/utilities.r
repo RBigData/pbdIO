@@ -47,5 +47,5 @@ copy_source <- function(dest_dir = ".", package = "pbdIO", kind = "*.sh$",
   files <- list.files(source_dir, pattern = kind, full.names = TRUE)
   file.copy(files, dest_dir)
   obj = ifelse(length(files) == 1, "file", "files")
-  paste(length(files), obj, "copied to", dest_dir)
+  invisible(cat(paste(length(files), obj, "copied to", dest_dir), "\n"))
 }
