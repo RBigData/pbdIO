@@ -1,2 +1,3 @@
 matrix    pbdIO   Example reading airline data csv files and performing matrix operations (unfinished)
 quantiles pbdIO   Example reading airline data csv files and extracting quantiles.
+read_hmda pbdIO   Example reading HMDA data csv files (R code and Slurm submission)
