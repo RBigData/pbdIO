@@ -20,8 +20,7 @@
 ## There also appears to be a file cache as the second read is 10x 
 ##   faster than the first. Can this be improved with striping on lustre?
 
-cd ~/SciApplications/hmda/example
-pwd
+## Assumes system variable R_HMDA_DEMO=<directory with read_hmda.R>
 
 ## modules are specific to or-slurm-login.ornl.gov (CADES SHPC condos)
 source /software/cades-open/spack-envs/base/root/linux-centos7-x86_64/gcc-6.3.0/lmod-8.5.6-wdngv4jylfvg2j6jt7xrtugxggh5lpm5/lmod/lmod/init/bash
@@ -33,5 +32,5 @@ echo "loaded R with flexiblas"
 module list
 
 ## cades has two sockets per node and two (?) I/O channels
-time mpirun --map-by ppr:1:socket Rscript read.R
-time mpirun --map-by ppr:1:socket Rscript read.R
+time mpirun --map-by ppr:1:socket Rscript $R_HDMA_DEMO/read_hdma.R
+time mpirun --map-by ppr:1:socket Rscript $R_HDMA_DEMO/read_hdma.R
