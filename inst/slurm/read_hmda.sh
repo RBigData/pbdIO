@@ -29,8 +29,8 @@ module load r/4.1.0-py3-X-flexiblas
 echo "loaded R with flexiblas"
 module list
 
-## Assumes read_hdma.R is accessible from where this script runs
+## Assumes read_hmda.R is accessible from where this script runs
 
 ## CADES nodes have 2 sockets per node and 2 (?) I/O channels
-time mpirun --map-by ppr:1:socket Rscript read_hdma.r
-time mpirun --map-by ppr:1:socket Rscript read_hdma.r
+time mpirun --map-by ppr:1:socket Rscript read_hmda.r
+time mpirun --map-by ppr:1:socket Rscript read_hmda.r
