@@ -41,10 +41,11 @@ copy_source <- function(dest_dir = ".", package = "pbdIO", kind = "*.sh$",
                     source_dir = "slurm") {
   source_dir <- paste0(Sys.glob(Sys.getenv('R_LIBS_USER')), "/", package, "/", 
                        source_dir)
+  dest_dir = Sys.glob(dest_dir)
   if(!file.exists(source_dir)) stop(paste("copy_sh:", source_dir, 
                                           "does not exist"))
   files <- list.files(source_dir, pattern = kind, full.names = TRUE)
   file.copy(files, dest_dir)
   obj = ifelse(length(files) == 1, "file", "files")
-  paste(length(files), obj, "copied to", Sys.glob(dest_dir), "\n")
+  paste(length(files), obj, "copied to", dest_dir)
 }
