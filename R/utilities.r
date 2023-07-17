@@ -22,9 +22,13 @@ deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
 #' 
 #' @param dest_dir
 #' Character string giving the directory where to copy demo shell script.
+#' @param package
+#' Character string giving the package name.
 #' @param kind
 #' Character string giving kind of job manager script, which is also the
 #' directory name for its location in the package source.
+#' @param source_dir 
+#' Character string of the package directory containing the file(s) to copy.
 #' 
 #' @details
 #' Details for \code{pbdIO}:
