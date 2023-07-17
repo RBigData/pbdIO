@@ -29,11 +29,8 @@ module load r/4.1.0-py3-X-flexiblas
 echo "loaded R with flexiblas"
 module list
 
-## Assumes pbdIO was installed in usual R_LIBS_USER
-democode=`Rscript -e \
-"cat(Sys.glob(Sys.getenv('R_LIBS_USER')))"`/pbdIO/slurm/read_hdma.R
-echo "Running "$democode
+## Assumes read_hdma.R is accessible from where this script runs
 
-## cades has two sockets per node and two (?) I/O channels
-time mpirun --map-by ppr:1:socket Rscript $democode
-time mpirun --map-by ppr:1:socket Rscript $democode
+## CADES nodes have 2 sockets per node and 2 (?) I/O channels
+time mpirun --map-by ppr:1:socket Rscript read_hdma.r
+time mpirun --map-by ppr:1:socket Rscript read_hdma.r
