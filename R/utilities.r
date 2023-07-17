@@ -40,7 +40,7 @@ deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
 copy_source <- function(dest_dir = ".", package = "pbdIO", kind = "*.sh$", 
                     source_dir = "slurm") {
   source_dir <- paste0(Sys.glob(Sys.getenv('R_LIBS_USER')), "/", package, "/", 
-                       dir)
+                       source_dir)
   if(!file.exists(source_dir)) stop(paste("copy_sh:", source_dir, 
                                           "does not exist"))
   files <- list.files(source_dir, pattern = kind)
