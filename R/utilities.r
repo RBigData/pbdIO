@@ -15,10 +15,7 @@ deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
     invisible(time)
 }
 
-#' `copy_source` Copies files from a user-installed package. Intended for
-#' non-standard directories that package developers include under the `inst` 
-#' directory, which installation brings up one level to the top package 
-#' directory and deletes `inst`.
+#' `copy_source` Copies files from a user-installed package.
 #' 
 #' @param dest_dir
 #' Character string giving the directory where to copy demo shell script.
@@ -31,6 +28,11 @@ deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
 #' Character string of the package directory containing the file(s) to copy.
 #' 
 #' @details
+#' Intended for code stored in
+#' non-standard directories in packages included under the `inst` 
+#' directory, which installation brings up one level to the top package 
+#' directory and deletes `inst`. However, standard directories will work too.
+#'  
 #' Details for \code{pbdIO}:
 #' Running MPI codes on clusters requires batch submission to a job scheduler,
 #' which is best done with a shell script. This function provides a means to 
