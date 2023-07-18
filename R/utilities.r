@@ -15,7 +15,7 @@ deltime <- function(ltime=proc.time()["elapsed"], text=NULL) {
     invisible(time)
 }
 
-#' `copy_source` Copies files from a user-installed package.
+#' Copy files from a user-installed package.
 #' 
 #' @param dest_dir
 #' Character string giving the directory where to copy demo shell script.
