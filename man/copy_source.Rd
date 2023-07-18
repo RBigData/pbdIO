@@ -2,10 +2,7 @@
 % Please edit documentation in R/utilities.r
 \name{copy_source}
 \alias{copy_source}
-\title{`copy_source` Copies files from a user-installed package. Intended for
-non-standard directories that package developers include under the `inst` 
-directory, which installation brings up one level to the top package 
-directory and deletes `inst`.}
+\title{`copy_source` Copies files from a user-installed package.}
 \usage{
 copy_source(
   dest_dir = ".",
@@ -25,12 +22,14 @@ directory name for its location in the package source.}
 \item{source_dir}{Character string of the package directory containing the file(s) to copy.}
 }
 \description{
-`copy_source` Copies files from a user-installed package. Intended for
-non-standard directories that package developers include under the `inst` 
-directory, which installation brings up one level to the top package 
-directory and deletes `inst`.
+`copy_source` Copies files from a user-installed package.
 }
 \details{
+Intended for code stored in
+non-standard directories in packages included under the `inst` 
+directory, which installation brings up one level to the top package 
+directory and deletes `inst`. However, standard directories will work too.
+ 
 Details for \code{pbdIO}:
 Running MPI codes on clusters requires batch submission to a job scheduler,
 which is best done with a shell script. This function provides a means to 
