@@ -2,6 +2,7 @@ Release 0.2-0:
   * comm.chunk improved and moved to package pbdMPI
   * parameter `shcom` added to `comm.fread`
   * `deltime` function no longer exported
+  * Added example reading HMDA csv data
 Release 0.1-1:
   * Added more chunking options and documentation
 Release 0.1-0:
