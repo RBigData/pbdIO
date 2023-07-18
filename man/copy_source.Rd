@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.r
 \name{copy_source}
 \alias{copy_source}
-\title{`copy_source` Copies files from a user-installed package.}
+\title{Copy files from a user-installed package.}
 \usage{
 copy_source(
   dest_dir = ".",
@@ -22,7 +22,7 @@ directory name for its location in the package source.}
 \item{source_dir}{Character string of the package directory containing the file(s) to copy.}
 }
 \description{
-`copy_source` Copies files from a user-installed package.
+Copy files from a user-installed package.
 }
 \details{
 Intended for code stored in
